@@ -9,6 +9,8 @@
 [Ll]ogs/
 .vs/
 .vscode/
+obj/
+**/obj/
 *.user
 *.suo
 *.userosscache
