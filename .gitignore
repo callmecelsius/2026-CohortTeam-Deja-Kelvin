@@ -11,6 +11,7 @@
 .vscode/
 obj/
 **/obj/
+*obj/
 *.user
 *.suo
 *.userosscache
