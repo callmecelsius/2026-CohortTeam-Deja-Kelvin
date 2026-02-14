@@ -12,10 +12,15 @@
 obj/
 **/obj/
 *obj/
+**/obj/Debug/*.props
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
+*.g.props
+*.g.targets
+*.nuget.g.props
+*.nuget.g.targets
 
 # .NET Secrets & Configuration
 appsettings.Development.json

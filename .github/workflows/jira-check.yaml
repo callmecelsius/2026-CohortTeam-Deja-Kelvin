@@ -1,0 +1,20 @@
+name: "Jira Ticket Check"
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  check-ticket-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR Title for KAN Ticket
+        shell: bash
+        run: |
+          LOWER_TITLE=$(echo "${{ github.event.pull_request.title }}" | tr '[:upper:]' '[:lower:]')
+          
+          REGEXP="kan-?[0-9]+"
+
+          if [[ ! "$LOWER_TITLE" =~ $REGEXP ]]; then
+            echo "::error::This PR must have a corresponding Jira ticket."
+            exit 1
+          fi
