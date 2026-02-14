@@ -12,6 +12,7 @@
 obj/
 **/obj/
 *obj/
+**/obj/Debug/*.props
 *.user
 *.suo
 *.userosscache
