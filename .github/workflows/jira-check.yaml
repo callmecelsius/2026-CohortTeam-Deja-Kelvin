@@ -12,7 +12,9 @@ jobs:
         run: |
           LOWER_TITLE=$(echo "${{ github.event.pull_request.title }}" | tr '[:upper:]' '[:lower:]')
           
-          if [[ ! "$LOWER_TITLE" =~ (^|[[:space:]])kan-[0-9]+ ]]; then
-            echo "::error::A Jira ticket must exist for this PR. Please make sure to reference the associated ticket code."
+          REGEXP="kan-?[0-9]+"
+
+          if [[ ! "$LOWER_TITLE" =~ $REGEXP ]]; then
+            echo "::error::A Jira ticket (KAN-### or KAN###) must be in the PR title."
             exit 1
           fi
