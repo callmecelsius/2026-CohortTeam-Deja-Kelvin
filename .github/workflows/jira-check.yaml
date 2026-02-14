@@ -15,6 +15,6 @@ jobs:
           REGEXP="kan-?[0-9]+"
 
           if [[ ! "$LOWER_TITLE" =~ $REGEXP ]]; then
-            echo "::error::A Jira ticket (KAN-### or KAN###) must be in the PR title."
+            echo "::error::This PR must have a corresponding Jira ticket."
             exit 1
           fi
