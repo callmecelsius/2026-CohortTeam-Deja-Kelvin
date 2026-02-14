@@ -1,6 +1,0 @@
-@Git_A_Pet.Server_HostAddress = http://localhost:5216
-
-GET {{Git_A_Pet.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
