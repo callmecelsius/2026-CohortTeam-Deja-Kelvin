@@ -76,11 +76,15 @@ export default function HomePage() {
 
               {/* Mission text */}
               <p className="text-xl font-extrabold leading-snug">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliq
+                Smarter Foster Management for Safer Animal Care
+Track supplies, preserve medical histories, and keep every foster animal's information in one secure place; reducing loss, risk, and administrative stress for shelters.
+
+MISSION 
+Empowering animal shelters and foster families with simple, reliable tools that protect animals, preserve resources, and strengthen lifesaving care. We eliminate inventory loss, prevent medical gaps,and ensure every animal's journey is supported by accurate records, responsible stewardship, and compassionate collaboration.
               </p>
             </div>
           </div>
+          </main>
 
 
 <div className="mt-6 grid gap-6 md:grid-cols-[380px_1fr] md:items-start">
@@ -113,7 +117,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Contact block (center-ish under hero) */}
+        {/* (Contact block (center-ish under hero) */}
         <div className="mt-10 flex justify-center">
           <div className="grid gap-4 text-lg font-semibold">
             <div className="flex items-center gap-4">
@@ -138,7 +142,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </main>
+      
 
       {/* Footer */}
       <footer className="mt-12 bg-[#D8BE8B]">
@@ -159,8 +163,8 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
-  )
+    
+  
 }
 
 /* --------------------- Small UI bits (icons) --------------------- */
