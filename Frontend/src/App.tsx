@@ -1,16 +1,16 @@
-import { useState } from 'react'
-
 import './App.css'
-import { Button } from "@/components/ui/button"
+import ParentRegistration from './components/register/parentregistration'
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
-      <div className="flex min-h-svh flex-col items-center justify-center">
+      {/* <div className="flex min-h-svh flex-col items-center justify-center">
         <Button variant="outline">Click me</Button>
-      </div>
+      </div> */}
+      <ParentRegistration/>
+
     </>
   )
 }
