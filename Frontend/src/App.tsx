@@ -1,23 +1,27 @@
 import HomePage from './pages/HomePage';
+import NavBar from './components/NavBar';
+import Footer from './components/Footer';
+import ParentRegistration from './components/register/ParentRegistration';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+const router= createBrowserRouter(
+  [
+    {
+      path:"/",
+      element:<div><NavBar /><HomePage /><Footer/></div>
 
+    },
+    {
+      path:"/parent-registration",
+      element:<div><NavBar /><ParentRegistration/><Footer/></div>
+    }
+
+  ]
+);
 export default function App() {
-  return <HomePage />;
+  return (
+    <>
+    <RouterProvider router={router}/>
+    
+    </>
+  );
 }
-
-//comment out code to run test//
-//import './App.css';//
-//import { Button } from '@/components/ui/button';//
-//import NavBar from './components/NavBar';//
-
-//export default function App() {//
-//return (//
-//<div className="min-h-screen bg-[#F5ECD5]">//
-//<NavBar />//
-
-//{/* Page content below navbar */}//
-//<div className="p-10">//
-// <Button variant="outline">Click me</Button>//
-//</div>//
-//</div>//
-//);//
-//}//
