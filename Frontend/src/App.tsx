@@ -1,18 +1,23 @@
-import { useState } from 'react'
+import HomePage from './pages/HomePage';
 
-import './App.css'
-import { Button } from "@/components/ui/button"
-
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div className="flex min-h-svh flex-col items-center justify-center">
-        <Button variant="outline">Click me</Button>
-      </div>
-    </>
-  )
+export default function App() {
+  return <HomePage />;
 }
 
-export default App
+//comment out code to run test//
+//import './App.css';//
+//import { Button } from '@/components/ui/button';//
+//import NavBar from './components/NavBar';//
+
+//export default function App() {//
+//return (//
+//<div className="min-h-screen bg-[#F5ECD5]">//
+//<NavBar />//
+
+//{/* Page content below navbar */}//
+//<div className="p-10">//
+// <Button variant="outline">Click me</Button>//
+//</div>//
+//</div>//
+//);//
+//}//
