@@ -1,5 +1,4 @@
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+
 import { FaHome, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 
 import heroImg from '../assets/hero.jpg';
@@ -7,8 +6,8 @@ import missionImg from '../assets/mission.jpg';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#F5ECD5] text-black">
-      <NavBar />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-100 to-rose-200 p-4">
+      
 
       <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
@@ -95,8 +94,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -9,6 +9,8 @@ import {
 } from '@headlessui/react';
 import logo from '../assets/paws.png';
 
+import { Link } from "react-router-dom";
+
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
   { name: 'Team', href: '#', current: false },
@@ -90,25 +92,18 @@ export default function NavBar() {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
-                    Your profile
+                    Employee
                   </a>
                 </MenuItem>
                 <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                  <Link
+                    to="parent-registration"
+                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100"
                   >
-                    Settings
-                  </a>
+                    Parent
+                  </Link>
                 </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Sign out
-                  </a>
-                </MenuItem>
+
               </MenuItems>
             </Menu>
           </div>
