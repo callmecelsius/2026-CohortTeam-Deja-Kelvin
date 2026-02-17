@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Data.AppDbContext;
+namespace Backend.Data;
 
 public partial class AppDbContext : DbContext
 {
@@ -65,7 +65,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Animal");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "Animal_Id_key").IsUnique();
+
             entity.Property(e => e.IntakeDate).HasColumnType("timestamp without time zone");
         });
 
@@ -75,7 +76,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("AnimalCondition");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "AnimalCondition_Id_key").IsUnique();
+
             entity.Property(e => e.EndDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.StartDate).HasColumnType("timestamp without time zone");
 
