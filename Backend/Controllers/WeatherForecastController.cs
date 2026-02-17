@@ -1,3 +1,4 @@
+using Backend.Data.AppDbContext;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -12,15 +13,21 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    private AppDbContext _context;
+    public WeatherForecastController(
+        ILogger<WeatherForecastController> logger,
+        AppDbContext context
+        )
     {
+        _context = context;
         _logger = logger;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
+        var temp = _context.Animals.ToList();
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
