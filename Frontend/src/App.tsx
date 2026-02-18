@@ -1,27 +1,42 @@
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+
 import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import ParentRegistration from './components/register/ParentRegistration';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-const router= createBrowserRouter(
-  [
-    {
-      path:"/",
-      element:<div><NavBar /><HomePage /><Footer/></div>
+import FosterPage from './pages/FosterPage';
 
-    },
-    {
-      path:"/parent-registration",
-      element:<div><NavBar /><ParentRegistration/><Footer/></div>
-    }
-
-  ]
-);
-export default function App() {
+function Layout() {
   return (
     <>
-    <RouterProvider router={router}/>
-    
+      <NavBar />
+      <Outlet />
+      <Footer />
     </>
   );
+}
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'parent-registration',
+        element: <ParentRegistration />,
+      },
+      {
+        path: 'foster-page',
+        element: <FosterPage />,
+      },
+    ],
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }

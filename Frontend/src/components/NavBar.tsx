@@ -8,11 +8,11 @@ import {
   MenuItems,
 } from '@headlessui/react';
 import logo from '../assets/paws.png';
-
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import { RxAvatar } from 'react-icons/rx';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
+  { name: 'Dashboard', href: '/foster-page', current: true },
   { name: 'Team', href: '#', current: false },
   { name: 'Projects', href: '#', current: false },
   { name: 'Calendar', href: '#', current: false },
@@ -76,11 +76,7 @@ export default function NavBar() {
               <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">Open user menu</span>
-                <img
-                  alt=""
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e..."
-                  className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                />
+                <RxAvatar className="h-10 w-10 text-white" />;
               </MenuButton>
 
               <MenuItems
@@ -103,7 +99,6 @@ export default function NavBar() {
                     Parent
                   </Link>
                 </MenuItem>
-
               </MenuItems>
             </Menu>
           </div>

@@ -15,6 +15,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.13.5",
     "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.574.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
