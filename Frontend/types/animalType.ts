@@ -7,3 +7,6 @@ export interface Animal {
     intakeDate: string | null;
     status: string | null;
   }
+
+  //creates a new animal typeobject without the id property
+export type CreateAnimalDto = Omit<Animal, 'id'>;
