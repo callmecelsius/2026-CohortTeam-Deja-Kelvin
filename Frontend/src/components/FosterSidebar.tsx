@@ -40,7 +40,7 @@
 //               <SidebarMenu>
 //                 {fosterNavItems.map((item) => {
 //                   const isActive = location.pathname === item.href;
-//                   const Icon = item.icon;
+//                   const Icon = item.ic`on;
 //                   return (
 //                     <SidebarMenuItem key={item.name}>
 //                       <SidebarMenuButton
