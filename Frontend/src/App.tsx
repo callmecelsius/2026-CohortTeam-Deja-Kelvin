@@ -38,6 +38,15 @@ const router = createBrowserRouter([
         path: 'parent-registration',
         element: <ParentRegistration />,
       },
+      //Employee Pages
+      {
+        path: 'employee-page',
+        element: <EmployeeDashboard />,
+      },
+      {
+        path: 'employee-pets',
+        element: <EmployeePets/>
+      }
     ],
   },
   //Foster Parent Pages
