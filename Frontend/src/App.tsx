@@ -8,6 +8,7 @@ import FosterDashboard from './pages/foster/FosterDashboard';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import FosterPets from './pages/foster/FosterPets';
 import FosterStore from './pages/foster/FosterStore';
+import FosterParentLayout from './Layouts/FosterParentLayout';
 import EmployeePets from './pages/employee/EmployeePets';
 
 function Layout() {
@@ -39,10 +40,7 @@ const router = createBrowserRouter([
         path: 'employee-page',
         element: <EmployeeDashboard />,
       },
-      {
-        path: 'employee-pets',
-        element: <EmployeePets />,
-      },
+      
       //Foster Parent Pages
       {
         path: 'foster-page',
