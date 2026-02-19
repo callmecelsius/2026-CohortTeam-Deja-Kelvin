@@ -1,6 +1,7 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
     SidebarMenuItem,
@@ -9,6 +10,7 @@ import {
     SidebarMenu,
 } from "@/components/ui/sidebar"
 import type { LucideIcon } from "lucide-react";
+import { Home } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 export type NavItem = {
     name: string;
@@ -56,6 +58,19 @@ export function AppSidebar({label, navItems}: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Home">
+              <Link to="/">
+                <Home />
+                <span>Back to Home</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
