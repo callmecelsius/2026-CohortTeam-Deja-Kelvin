@@ -5,11 +5,15 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import ParentRegistration from './components/register/ParentRegistration';
 import FosterDashboard from './pages/foster/FosterDashboard';
-import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import FosterPets from './pages/foster/FosterPets';
 import FosterStore from './pages/foster/FosterStore';
 import FosterParentLayout from './Layouts/FosterParentLayout';
-import EmployeePets from './pages/employee/EmployeePets'
+import EmployeeLayout from './Layouts/EmployeeLayout';
+import EmployeeDashboard from './pages/employee/EmployeeDashboard';
+import EmployeeFosterParents from './pages/employee/EmployeeFosterParents';
+import EmployeeInventory from './pages/employee/EmployeeInventory';
+import EmployeePets from './pages/employee/EmployeePets';
+
 function Layout() {
   return (
     <>
@@ -45,12 +49,11 @@ const router = createBrowserRouter([
       }
     ],
   },
-      //Foster Parent Pages
-      {
+  //Foster Parent Pages
+  {
     path: '/',
     element: <FosterParentLayout />,
     children: [
-      //Foster Parent Pages
       {
         path: 'foster-page',
         element: <FosterDashboard />,
@@ -62,6 +65,29 @@ const router = createBrowserRouter([
       {
         path: 'foster-store-page',
         element: <FosterStore />,
+      },
+    ],
+  },
+  //Employee Pages
+  {
+    path: '/',
+    element: <EmployeeLayout />,
+    children: [
+      {
+        path: 'employee-page',
+        element: <EmployeeDashboard />,
+      },
+      {
+        path: 'employee-foster-parents-page',
+        element: <EmployeeFosterParents />,
+      },
+      {
+        path: 'employee-inventory-page',
+        element: <EmployeeInventory />,
+      },
+      {
+        path: 'employee-pets-page',
+        element: <EmployeePets />,
       },
     ],
   },

@@ -12,8 +12,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { RxAvatar } from 'react-icons/rx';
 
 const navigation = [
-  { name: 'Employee', href: '/employee-page' },
-  { name: 'Foster Parents', href: '/foster-page' },
+  { name: 'Parent Registration', href: '/parent-registration' },
 ];
 
 function classNames(...classes: (string | undefined | null | false)[]): string {
@@ -88,19 +87,19 @@ export default function NavBar() {
                 className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
               >
                 <MenuItem>
-                  <a
-                    href="#"
+                  <Link
+                    to="/employee-page"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Employee
-                  </a>
+                  </Link>
                 </MenuItem>
                 <MenuItem>
                   <Link
-                    to="parent-registration"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100"
+                    to="/foster-page"
+                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
-                    Parent 
+                    Foster Parents
                   </Link>
                 </MenuItem>
               </MenuItems>
