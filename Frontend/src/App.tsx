@@ -4,7 +4,10 @@ import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import ParentRegistration from './components/register/ParentRegistration';
-import FosterPage from './pages/FosterPage';
+import FosterDashboard from './pages/foster/FosterDashboard';
+import EmployeeDashboard from './pages/employee/EmployeeDashboard';
+import FosterPets from './pages/foster/FosterPets';
+import FosterStore from './pages/foster/FosterStore';
 
 function Layout() {
   return (
@@ -25,13 +28,29 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
+      //Registration Pages
       {
         path: 'parent-registration',
         element: <ParentRegistration />,
       },
+      //Employee Pages
+      {
+        path: 'employee-page',
+        element: <EmployeeDashboard />,
+      },
+      
+      //Foster Parent Pages
       {
         path: 'foster-page',
-        element: <FosterPage />,
+        element: <FosterDashboard />,
+      },
+      {
+        path: 'foster-pets-page',
+        element: <FosterPets />,
+      },
+      {
+        path: 'foster-store-page',
+        element: <FosterStore />,
       },
     ],
   },

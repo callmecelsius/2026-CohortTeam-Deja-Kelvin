@@ -8,14 +8,12 @@ import {
   MenuItems,
 } from '@headlessui/react';
 import logo from '../assets/paws.png';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { RxAvatar } from 'react-icons/rx';
 
 const navigation = [
-  { name: 'Dashboard', href: '/foster-page', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
+  { name: 'Employee', href: '/employee-page' },
+  { name: 'Foster Parents', href: '/foster-page' },
 ];
 
 function classNames(...classes: (string | undefined | null | false)[]): string {
@@ -23,6 +21,8 @@ function classNames(...classes: (string | undefined | null | false)[]): string {
 }
 
 export default function NavBar() {
+  const location = useLocation();
+
   return (
     <Disclosure as="nav" className="relative bg-gray-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -36,29 +36,34 @@ export default function NavBar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <img
-                src={logo}
-                alt="Cuddle Buddies Logo"
-                className="h-12 w-auto object-contain"
-              />
+              <Link to="/" className="flex items-center">
+                <img
+                  src={logo}
+                  alt="Cuddle Buddies Logo"
+                  className="h-12 w-auto object-contain"
+                />
+              </Link>
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    aria-current={item.current ? 'page' : undefined}
-                    className={classNames(
-                      item.current
-                        ? 'bg-gray-900 text-white'
-                        : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                      'rounded-md px-3 py-2 text-sm font-medium'
-                    )}
-                  >
-                    {item.name}
-                  </a>
-                ))}
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={classNames(
+                        isActive
+                          ? 'bg-gray-900 text-white'
+                          : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                        'rounded-md px-3 py-2 text-sm font-medium'
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -73,10 +78,9 @@ export default function NavBar() {
 
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
-              <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                <span className="absolute -inset-1.5" />
+              <MenuButton className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white ring-1 ring-white/10 hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                 <span className="sr-only">Open user menu</span>
-                <RxAvatar className="h-10 w-10 text-white" />;
+                <RxAvatar className="h-8 w-8 shrink-0" aria-hidden />
               </MenuButton>
 
               <MenuItems
@@ -96,7 +100,7 @@ export default function NavBar() {
                     to="parent-registration"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100"
                   >
-                    Parent
+                    Parent 
                   </Link>
                 </MenuItem>
               </MenuItems>
@@ -107,22 +111,25 @@ export default function NavBar() {
 
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">
-          {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as="a"
-              href={item.href}
-              aria-current={item.current ? 'page' : undefined}
-              className={classNames(
-                item.current
-                  ? 'bg-gray-900 text-white'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                'block rounded-md px-3 py-2 text-base font-medium'
-              )}
-            >
-              {item.name}
-            </DisclosureButton>
-          ))}
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <DisclosureButton
+                key={item.name}
+                as={Link}
+                to={item.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={classNames(
+                  isActive
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                  'block rounded-md px-3 py-2 text-base font-medium'
+                )}
+              >
+                {item.name}
+              </DisclosureButton>
+            );
+          })}
         </div>
       </DisclosurePanel>
     </Disclosure>
