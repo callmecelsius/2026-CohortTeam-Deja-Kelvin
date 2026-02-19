@@ -8,6 +8,7 @@ import FosterDashboard from './pages/foster/FosterDashboard';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import FosterPets from './pages/foster/FosterPets';
 import FosterStore from './pages/foster/FosterStore';
+import FosterParentLayout from './Layouts/FosterParentLayout';
 
 function Layout() {
   return (
@@ -38,7 +39,13 @@ const router = createBrowserRouter([
         path: 'employee-page',
         element: <EmployeeDashboard />,
       },
-      
+    ],
+  },
+      //Foster Parent Pages
+      {
+    path: '/',
+    element: <FosterParentLayout />,
+    children: [
       //Foster Parent Pages
       {
         path: 'foster-page',
