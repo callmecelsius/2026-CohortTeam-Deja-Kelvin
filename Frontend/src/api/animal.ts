@@ -6,6 +6,11 @@ export const getAnimals = async () => {
   return res.data;
 };
 
+export const getAnimalById = async (id: number) => {
+  const res = await api.get(`/Animal/${id}`);
+  return res.data;
+};
+
 export const createAnimal = async (animal: CreateAnimalDto) => {
   const res = await api.post("/Animal", animal);
   return res.data;

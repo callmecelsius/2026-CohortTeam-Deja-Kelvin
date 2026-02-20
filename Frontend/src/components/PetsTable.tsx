@@ -16,12 +16,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Animal } from "../../types/animalType";
 import { PetsModal } from "./PetsModal";
 
 export function PetsTable() {
+  const navigate = useNavigate();
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
@@ -88,6 +90,10 @@ export function PetsTable() {
     }
   };
 
+  const handleView = (animal: Animal) => {
+    navigate(`/employee-pets-page/${animal.id}`);
+  };
+
   return (
     <div className="w-full p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -147,6 +153,13 @@ export function PetsTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem
+                          onClick={() => handleView(animal)}
+                          className="cursor-pointer"
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          View
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleEdit(animal)}
                           className="cursor-pointer"
