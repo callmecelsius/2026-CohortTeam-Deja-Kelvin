@@ -7,6 +7,7 @@ namespace Backend.Data
         public void Save();
         public void Dispose();
         Repository<Animal> AnimalRepository { get; }
-        Repository<AnimalCondition> CourseRepository { get; }  
+        Repository<AnimalCondition> CourseRepository { get; }
+        Repository<Inventory> InventoryRepository { get; }
     }
 }
