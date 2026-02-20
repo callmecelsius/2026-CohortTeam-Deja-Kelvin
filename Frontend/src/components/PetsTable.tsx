@@ -92,7 +92,7 @@ export function PetsTable() {
     <div className="w-full p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Pets Database</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Pets</h2>
         </div>
         <Button
           onClick={handleAddPet}
