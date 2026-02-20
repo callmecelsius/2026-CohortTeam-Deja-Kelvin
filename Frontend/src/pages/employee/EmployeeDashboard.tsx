@@ -1,3 +1,4 @@
+
 export default function EmployeeDashboard() {
   return (
     <div className="p-6">
