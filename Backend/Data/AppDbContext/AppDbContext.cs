@@ -92,7 +92,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("BehaviorLog");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "BehaviorLog_Id_key").IsUnique();
+
             entity.Property(e => e.DateReported).HasColumnType("timestamp without time zone");
 
             entity.HasOne(d => d.Animal).WithMany(p => p.BehaviorLogs)
@@ -110,7 +111,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("FosterAssignment");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "FosterAssignment_Id_key").IsUnique();
+
             entity.Property(e => e.EndDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.StartDate).HasColumnType("timestamp without time zone");
 
@@ -129,7 +131,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("FosterHome");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "FosterHome_Id_key").IsUnique();
         });
 
         modelBuilder.Entity<FosterParent>(entity =>
@@ -138,7 +140,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("FosterParent");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "FosterParent_Id_key").IsUnique();
+
             entity.Property(e => e.ApprovedDate).HasColumnType("timestamp without time zone");
 
             entity.HasOne(d => d.FosterHome).WithMany(p => p.FosterParents)
@@ -156,7 +159,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("FosterParentNote");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "FosterParentNote_Id_key").IsUnique();
+
             entity.Property(e => e.DateCreated).HasColumnType("timestamp without time zone");
 
             entity.HasOne(d => d.FosterParent).WithMany(p => p.FosterParentNotes)
@@ -170,7 +174,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Inventory");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "Inventory_Id_key").IsUnique();
+
             entity.Property(e => e.LastUpdated).HasColumnType("timestamp without time zone");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Inventories)
@@ -184,7 +189,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Order");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "Order_Id_key").IsUnique();
+
             entity.Property(e => e.DateOrdered).HasColumnType("timestamp without time zone");
 
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
@@ -198,7 +204,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("OrderItem");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "OrderItem_Id_key").IsUnique();
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OrderId)
@@ -215,7 +221,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("Product");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "Product_Id_key").IsUnique();
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
@@ -228,7 +234,7 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("ProductCategory");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "ProductCategory_Id_key").IsUnique();
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -237,7 +243,8 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("User");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.HasIndex(e => e.Id, "User_Id_key").IsUnique();
+
             entity.Property(e => e.CreatedOn).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Lastname).HasColumnType("character varying");
             entity.Property(e => e.UpdatedOn).HasColumnType("timestamp without time zone");
