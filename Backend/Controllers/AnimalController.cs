@@ -83,6 +83,11 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
+            var animal = _unitOfWork.AnimalRepository.GetByID(id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
             _unitOfWork.AnimalRepository.Delete(id);
             _unitOfWork.Save();
             return Ok();
