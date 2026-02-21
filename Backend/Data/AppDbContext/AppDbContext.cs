@@ -246,7 +246,6 @@ public partial class AppDbContext : DbContext
             entity.HasIndex(e => e.Id, "User_Id_key").IsUnique();
 
             entity.Property(e => e.CreatedOn).HasColumnType("timestamp without time zone");
-            entity.Property(e => e.Lastname).HasColumnType("character varying");
             entity.Property(e => e.UpdatedOn).HasColumnType("timestamp without time zone");
         });
 
