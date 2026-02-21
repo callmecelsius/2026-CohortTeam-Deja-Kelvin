@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Data.AppDbContext;
+namespace Backend.Data;
 
 public partial class AppDbContext : DbContext
 {
