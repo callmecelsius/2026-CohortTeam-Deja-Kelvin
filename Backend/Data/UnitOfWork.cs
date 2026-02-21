@@ -7,6 +7,13 @@ namespace Backend.Data
         private AppDbContext _context;
         private Repository<Animal> animalRepository;
         private Repository<AnimalCondition> animalConditionRepository;
+        private Repository<FosterParent> fosterParentRepository;
+        private Repository<Inventory> inventoryRepository;
+        private Repository<User> userRepository;
+        private Repository<Product> productRepository;
+        private Repository<ProductCategory> productCategoryRepository;        
+        private Repository<Order> orderRepository;
+        private Repository<OrderItem> orderitemRepository;
 
         public UnitOfWork(AppDbContext context) 
         { 
@@ -35,6 +42,97 @@ namespace Backend.Data
                     this.animalConditionRepository = new Repository<AnimalCondition>(_context);
                 }
                 return animalConditionRepository;
+            }
+        }
+
+        public Repository<FosterParent> FosterParentRepository
+        {
+            get
+            {
+
+                if (this.fosterParentRepository == null)
+                {
+                    this.fosterParentRepository = new Repository<FosterParent>(_context);
+                }
+                return fosterParentRepository;
+            }
+        }
+
+        //Inventory
+        public Repository<Inventory> InventoryRepository
+        {
+            get
+            {
+                if (this.inventoryRepository == null)
+                {
+                    this.inventoryRepository = new Repository<Inventory>(_context);
+                }
+                return inventoryRepository;
+            }
+        }
+
+        //User
+        public Repository<User> UserRepository
+        {
+            get
+            {
+                if (this.userRepository == null)
+                {
+                    this.userRepository = new Repository<User>(_context);
+                }
+                return userRepository;
+            }
+        }
+
+        //Product
+        public Repository<Product> ProductRepository
+        {
+            get
+            {
+                if (this.productRepository == null)
+                {
+                    this.productRepository = new Repository<Product>(_context);
+                }
+                return productRepository;
+            }
+        }
+
+        //Product Category
+        public Repository<ProductCategory> ProductCategoryRepository
+        {
+            get
+            {
+                if (this.productCategoryRepository == null)
+                {
+                    this.productCategoryRepository = new Repository<ProductCategory>(_context);
+                }
+                return productCategoryRepository;
+            }
+        }
+
+        //Order
+        public Repository<Order> OrderRepository
+        {
+            get
+            {
+                if (this.orderRepository == null)
+                {
+                    this.orderRepository = new Repository<Order>(_context);
+                }
+                return orderRepository;
+            }
+        }
+
+        //Order Item
+        public Repository<OrderItem> OrderItemRepository
+        {
+            get
+            {
+                if (this.orderitemRepository == null)
+                {
+                    this.orderitemRepository = new Repository<OrderItem>(_context);
+                }
+                return orderitemRepository;
             }
         }
 

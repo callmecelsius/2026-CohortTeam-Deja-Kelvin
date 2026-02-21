@@ -9,7 +9,7 @@ namespace Backend.Controllers
   [ApiController]
   public class AccountController : ControllerBase
   {
-    private readonly AppDbContext;
-    private readonly UserManager<IdentityUser> _userManager;
+    //private readonly AppDbContext;
+    //private readonly UserManager<IdentityUser> _userManager;
   }
 }
