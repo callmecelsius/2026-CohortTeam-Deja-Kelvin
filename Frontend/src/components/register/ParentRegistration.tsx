@@ -15,6 +15,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { registerParent } from "@/api/userregistration";
+import type { RegistrationData } from "@/api/userregistration";
 
 const formSchema = z
     .object({
@@ -40,23 +42,24 @@ const formSchema = z
             .regex(/^[A-Za-z\s]+$/, "Letters only"),
         state: z
             .string()
-            .min(1, "Please select a state"), 
+            .min(1, "Please select a state"),
         zip: z
             .string()
             .regex(/^[0-9]{5,6}$/, "5-6 digits only"),
-        password: z
-            .string()
-            .min(8, "At least 8 characters")
-            .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
-                "Must contain uppercase, lowercase, number & special char"
-            ),
-        confirmPassword: z.string(),
+        // password: z
+        //     .string()
+        //     .min(8, "At least 8 characters")
+        //     .regex(
+        //         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
+        //         "Must contain uppercase, lowercase, number & special char"
+        //     ),
+        // confirmPassword: z.string(),
     })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    });
+    // .refine((data) => data.password === data.confirmPassword, {
+    //     message: "Passwords do not match",
+    //     path: ["confirmPassword"],
+    // })
+    ;
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -73,14 +76,34 @@ const ParentRegistration = () => {
             city: "",
             state: "",
             zip: "",
-            password: "",
-            confirmPassword: "",
+            //password: "",
+            //confirmPassword: "",
         },
     });
 
-    const onSubmit = (data: FormValues) => {
-        console.log(data);
-        // Handle form submission here
+    const onSubmit = async (data: FormValues) => {
+
+        try {
+            console.log("Form data:", data);
+
+            // Convert phone to number
+            const registrationData = {
+                ...data,
+                phone: parseInt(data.phone, 10),  // Convert string to number
+            };
+
+            console.log("Sending to backend:", registrationData);
+
+            const result = await registerParent(registrationData as any);
+            form.reset();
+            alert("Registration successful!");
+
+        } catch (err: any) {
+            const errorMessage = err.error || err.message || "Registration failed!";
+
+            console.error("Registration error:", err);
+            alert(errorMessage);
+        }
     };
 
     return (
@@ -250,8 +273,8 @@ const ParentRegistration = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                            </FormControl>                                            
-                                            
+                                            </FormControl>
+
                                         </FormItem>
                                     )}
                                 />
@@ -275,7 +298,7 @@ const ParentRegistration = () => {
                             </div>
 
                             {/* Password & Confirm Password */}
-                            <div className="grid grid-cols-2 gap-4">
+                            {/* <div className="grid grid-cols-2 gap-4">
                                 <FormField
                                     control={form.control}
                                     name="password"
@@ -319,7 +342,7 @@ const ParentRegistration = () => {
                             <FormDescription>
                                 Min 8 characters with uppercase, lowercase, number & special character.
                             </FormDescription>
-
+                            */}
                             {/* Submit Button */}
                             <Button type="submit" variant="outline" className="w-full font-semibold py-3 text-lg rounded-lg transition-all duration-200" >
                                 Register
