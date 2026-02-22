@@ -85,8 +85,8 @@ namespace Backend.Controllers
                 }
                 var user = new User
                 {
-                    Firstname = userDto.Firstname,
-                    Lastname = userDto.Lastname,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
                     EmployeeId = userDto.EmployeeId,
                     PhoneNumber = userDto.PhoneNumber,
                     Email = userDto.Email,
