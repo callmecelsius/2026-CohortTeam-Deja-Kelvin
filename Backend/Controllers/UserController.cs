@@ -21,10 +21,10 @@ namespace Backend.Controllers
 
         [HttpGet]
         public IEnumerable<User> Get()
-        {
+   {
             var userTemp = _unitOfWork.UserRepository.Get();
             return userTemp;
-        }
+        }     
 
         /*
          {
