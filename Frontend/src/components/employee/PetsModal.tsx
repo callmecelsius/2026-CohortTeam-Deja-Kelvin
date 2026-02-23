@@ -94,7 +94,7 @@ export function PetsModal({ open, onOpenChange, onSubmit, initialData }: PetsMod
               id="pet-breed"
               value={form.breed}
               onChange={(e) => setForm({ ...form, breed: e.target.value })}
-              placeholder="Golden Retriever"
+              placeholder="Dog"
             />
           </div>
           <div className="space-y-2">
@@ -117,12 +117,17 @@ export function PetsModal({ open, onOpenChange, onSubmit, initialData }: PetsMod
           </div>
           <div className="space-y-2">
             <Label htmlFor="pet-status">Pet Status</Label>
-            <Input
+            <select
               id="pet-status"
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value })}
-              placeholder="Available"
-            />
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="" disabled>Select status</option>
+              <option value="Available">Available</option>
+              <option value="Pending">Pending</option>
+              <option value="Fostered">Fostered</option>
+            </select>
           </div>
         </div>
         <DialogFooter>

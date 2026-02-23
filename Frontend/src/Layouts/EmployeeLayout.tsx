@@ -4,9 +4,10 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/SideBar';
-import type { NavItem } from '@/components/SideBar';
+import { AppSidebar } from '@/components/shared/SideBar';
+import type { NavItem } from '@/components/shared/SideBar';
 import { Box, LayoutDashboard, PawPrint, Users } from 'lucide-react';
+import { UserAvatar } from '@/components/shared/UserAvatar';
 
 const employeeNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/employee-page', icon: LayoutDashboard },
@@ -20,8 +21,9 @@ export default function EmployeeLayout() {
     <SidebarProvider>
       <AppSidebar label="Employee" navItems={employeeNavItems} />
       <SidebarInset className="flex flex-col min-h-screen">
-        <header className="flex h-16 items-center px-4">
+        <header className="flex h-16 items-center justify-between px-4">
           <SidebarTrigger />
+          <UserAvatar />
         </header>
         <div className="flex-1">
           <Outlet />

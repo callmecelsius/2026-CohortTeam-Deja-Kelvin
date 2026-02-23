@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react';
-import logo from '../assets/paws.png';
+import logo from '../../assets/paws.png';
 import { Link, useLocation } from 'react-router-dom';
 import { RxAvatar } from 'react-icons/rx';
 
