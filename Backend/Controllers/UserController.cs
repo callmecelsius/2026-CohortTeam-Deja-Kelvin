@@ -85,8 +85,8 @@ namespace Backend.Controllers
                 }
                 var user = new User
                 {
-                    Firstname = userDto.Firstname,
-                    Lastname = userDto.Lastname,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
                     EmployeeId = userDto.EmployeeId,
                     PhoneNumber = userDto.PhoneNumber,
                     Email = userDto.Email,
@@ -104,7 +104,7 @@ namespace Backend.Controllers
                 return Ok("user registered successfully.");
 
             }            
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
