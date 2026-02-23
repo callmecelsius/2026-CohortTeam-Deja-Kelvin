@@ -1,140 +1,147 @@
+// ERD updated 2/22/2026
 
-//Do we want this singular or plural? 
-
-Table users {
-  id integer [primary key]
-  employee_id integer [not null]
-  username varchar
-  firstname varchar
-  lastname varchar 
-  phone_number integer // listed as an integer for the time being 
-  email varchar 
-  address varchar 
-  city varchar
-  state varchar 
-  zip integer 
-  role varchar
-  created_at timestamp
-  updated_at timestamp 
+// *****************
+// User System
+// *****************
+Table User {
+  Id integer [primary key]  
+  FirstName text
+  LastName text
+  EmployeeId integer [null] 
+  PhoneNumber integer 
+  Email text
+  Address text
+  City text
+  State text
+  Zip integer   
+  CreatedOn timestamp
+  UpdatedOn timestamp 
 }
 
-Table roles {
-  id integer [primary key]
-  employee_id integer [not null]
-
+// *****************
+// Animal System
+// *****************
+Table Animal {
+  Id integer [primary key]
+  Name text
+  Breed text
+  Weight numeric
+  Height numeric
+  IntakeDate timestamp 
+  Status text  
+  AnimalPhoto bytea 
+   
 }
 
-// What is a good way to determine role of user
-// whether Employee or Foster Parent? 
+Table AnimalCondition {
+  Id integer [primary key]
+  AnimalId integer
+  ConditionType text
+  Description text
+  Severity text
+  StartDate timestamp
+  EndDate timestamp
+  VetSeen bool
+}
+Ref: AnimalCondition.AnimalId > Animal.Id
 
-// if "Foster Parent" : need email, phone, address (street, city, state, zip)
-// if "Employee": phone number, email (work/organization), employee ID number, title/position
+Table BehaviorLog {
+  Id integer [primary key]
+  AnimalId integer
+  ReportedByUserId integer
+  BehaviorType text
+  Notes text
+  DateReported timestamp
+  Resolved bool
+}
+Ref: BehaviorLog.AnimalId > Animal.Id
+Ref: BehaviorLog.ReportedByUserId > User.Id
 
-// any additional information 
 
-Table pets {
-
-  id integer [primary key]
-  user_id integer [not null] // one 
-  pet_id integer [not null]// many
-  name varchar
-  species varchar // species (dog, cat) maybe different animals eventually 
-  breed varchar // breed 
-  age integer 
-  date_of_birth datetime 
-  vaccination_status boolean 
-  adoption_status boolean
-  created_at timestamp
-  updated_at timestamp 
-  
+// *****************
+// Foster Structure System
+// *****************
+Table FosterHome {
+  Id integer [primary key]
+  HomeName text
+  Address text
+  Capacity integer 
 }
 
+Table FosterParent {
+  Id integer [primary key]
+  UserId integer
+  FosterHomeId integer
+  ApprovedDate timestamp
+  Status text
+}
+Ref: FosterParent.UserId > User.Id
+Ref: FosterParent.FosterHomeId > FosterHome.Id
 
-Table medical_history {
-  
-  id integer [primary key]
-  pet_id integer [not null]
-  urgent integer 
-  behavior varchar
-  date datetime 
+Table FosterAssignment {
+  Id integer [primary key]
+  AnimalId integer
+  FosterHomeId integer
+  StartDate timestamp
+  EndDate timestamp 
+}
+Ref: FosterAssignment.AnimalId > Animal.Id
+Ref: FosterAssignment.FosterHomeId > FosterHome.Id
 
+Table FosterParentNote {
+  Id integer [primary key]
+  FosterParentId integer  
+  Notes text
+  DateCreated timestamp
+}
+Ref: FosterParentNote.FosterParentId > FosterParent.Id
+
+
+// *****************
+//   Product System
+// *****************
+Table ProductCategory {
+  Id integer [primary key]
+  Name text
 }
 
-
-Table products {
-  
-  id integer [primary key]
-  user_id integer [not null]
-  product_id integer [not null]
-  name varchar 
-  type varchar 
-  price integer
-  UPC integer
-  is_purchased boolean 
-  is_rented boolean 
-  rent_start datetime
-  rent_end datetime 
-  description varchar 
-  quantity integer 
-  
+Table Product {
+  Id integer [primary key]
+  CategoryId integer
+  Description text
+  UnitPrice numeric
 }
+Ref: Product.CategoryId > ProductCategory.Id
 
-/* 
-
-Table category {
-
-Question for the Team: would this also be beneficial to have a talbe for category? 
-
+Table Inventory {
+  Id integer [primary key]
+  ProductId integer
+  QuantityOnHand integer
+  ReorderLevel integer
+  LastUpdated timestamp
 }
-
-*/ 
-
+Ref: Inventory.ProductId > Product.Id
 
 
-Table cart {
-  
-  id integer [primary key]
-  user_id integer [not null]
-  product_id integer [not null]
-  cart_id integer [not null]
-
+// *****************
+//   Ordering System
+// *****************
+Table Order {
+  Id integer [primary key]
+  UserId integer
+  OrderComplete bool
+  DateOrdered timestamp
 }
+Ref: Order.UserId > User.Id
 
-/*
-Table payment_details {
-
-
-
+Table OrderItem {
+  Id integer [primary key]
+  OrderId integer
+  ProductId integer
+  Quantity integer
 }
-
-// product ID and Service ID would also go into shopping cart 
-
-*/ 
-
-Table requests {
-
-  id integer [primary key]
-  user_id integer [not null]
-  pet_id integer [not null]
-  name varchar
-  description varchar
-  appointment_availability integer 
-} 
+Ref: OrderItem.OrderId > Order.Id
+Ref: OrderItem.ProductId > Product.Id
 
 
-Ref user_pets: pets.user_id > users.id // many-to-one
 
-
-Ref user_roles: roles.employee_id > users.employee_id
-
-Ref user_product: products.user_id > users.id 
-
-Ref user_services: requests.user_id > users.id
-
-Ref medical_history: medical_history.pet_id > pets.pet_id
-
-Ref pet_services: requests.pet_id > pets.pet_id
-
-//Ref: users.id < follows.following_user_id
-
-//Ref: users.id < follows.followed_user_id
