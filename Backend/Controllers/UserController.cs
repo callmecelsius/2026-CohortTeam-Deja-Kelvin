@@ -104,7 +104,7 @@ namespace Backend.Controllers
                 return Ok("user registered successfully.");
 
             }            
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
