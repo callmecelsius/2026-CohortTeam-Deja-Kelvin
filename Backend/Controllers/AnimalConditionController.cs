@@ -27,7 +27,7 @@ namespace Backend.Controllers
       return Ok(animalCondition);
     }
 
-    [HttpGet("{animalId}")]
+    [HttpGet("animal/{animalId}")]
     public ActionResult GetByAnimal(int animalId)
     {
       var conditions = _unitOfWork.AnimalConditionRepository
