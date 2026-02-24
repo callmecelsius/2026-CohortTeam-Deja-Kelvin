@@ -24,6 +24,7 @@ Table User {
 Table Animal {
   Id integer [primary key]
   Name text
+  Type text 
   Breed text
   Weight numeric
   Height numeric
