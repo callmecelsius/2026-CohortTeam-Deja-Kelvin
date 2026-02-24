@@ -15,8 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { registerParent } from "@/api/userregistration";
-import type { RegistrationData } from "@/api/userregistration";
+import { registerParent } from "@/api/userregistration";;
 
 const formSchema = z
     .object({

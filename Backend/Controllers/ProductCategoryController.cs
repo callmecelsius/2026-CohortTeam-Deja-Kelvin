@@ -15,6 +15,21 @@ namespace Backend.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+        [HttpGet]
+        public IEnumerable<ProductCategoryDto> Get()
+        {
+            var categories = _unitOfWork.ProductCategoryRepository.Get()
+                .Select(c => new ProductCategoryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToList();
+
+            return categories;
+        }
+
         [HttpPost]
         /*http://localhost:5282/api/ProductCategory
             {
