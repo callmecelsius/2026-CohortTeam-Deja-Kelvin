@@ -6,14 +6,16 @@ import {
 } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/shared/SideBar';
 import type { NavItem } from '@/components/shared/SideBar';
-import { Box, LayoutDashboard, PawPrint, Users } from 'lucide-react';
+import { Box, LayoutDashboard, PawPrint, Users, Home } from 'lucide-react';
 import { UserAvatar } from '@/components/shared/UserAvatar';
 
 const employeeNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/employee-page', icon: LayoutDashboard },
   { name: 'Foster Parents', href: '/employee-foster-parents-page', icon: Users },
+  { name: 'Foster Homes', href:'/employee-foster-homes-page', icon: Home},
   { name: 'Inventory', href: '/employee-inventory-page', icon: Box },
   { name: 'Pets', href: '/employee-pets-page', icon: PawPrint },
+  
 ];
 
 export default function EmployeeLayout() {
