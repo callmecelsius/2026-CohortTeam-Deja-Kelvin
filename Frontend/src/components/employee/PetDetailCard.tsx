@@ -14,7 +14,7 @@ import {
   Brain,
   ImageIcon,
 } from "lucide-react";
-import type { Animal } from "../../types/animalType";
+import type { Animal } from "../../../types/animalType";
 
 type PetDetailCardProps = {
   animal: Animal;
@@ -23,11 +23,19 @@ type PetDetailCardProps = {
 export function PetDetailCard({ animal }: PetDetailCardProps) {
   return (
     <Card className="max-w-3xl w-full">
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-t-xl">
-        <div className="flex flex-col items-center text-gray-400 dark:text-gray-500">
-          <ImageIcon className="h-16 w-16 mb-2" />
-          <p className="text-sm">No image available</p>
-        </div>
+      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden">
+        {animal.animalPhoto ? (
+          <img
+            src={`data:image/png;base64,${animal.animalPhoto}`}
+            alt={animal.name ?? "Pet"}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="flex flex-col items-center text-gray-400 dark:text-gray-500">
+            <ImageIcon className="h-16 w-16 mb-2" />
+            <p className="text-sm">No image available</p>
+          </div>
+        )}
       </div>
 
       <CardHeader>

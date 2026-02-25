@@ -1,4 +1,4 @@
-﻿using Backend.Data;
+using Backend.Data;
 using Backend.Data.Models;
 using Backend.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +41,12 @@ namespace Backend.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] PostAnimalDto value)
         {
+            byte[]? photoBytes = null;
+            if (!string.IsNullOrEmpty(value.AnimalPhoto))
+            {
+                photoBytes = Convert.FromBase64String(value.AnimalPhoto);
+            }
+
             var newAnimal = new Animal()
             {
                 Name = value.Name,
@@ -48,7 +54,8 @@ namespace Backend.Controllers
                 Weight = value.Weight,
                 Height = value.Height,
                 IntakeDate = value.IntakeDate,
-                Status = value.Status
+                Status = value.Status,
+                AnimalPhoto = photoBytes
             };
 
             _unitOfWork.AnimalRepository.Insert(newAnimal);
@@ -59,7 +66,7 @@ namespace Backend.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Animal value)
+        public ActionResult Put(int id, [FromBody] PostAnimalDto value)
         {
             var animalDb = _unitOfWork.AnimalRepository.GetByID(id);
             if (animalDb == null)
@@ -73,6 +80,11 @@ namespace Backend.Controllers
             animalDb.Height = value.Height;
             animalDb.IntakeDate = value.IntakeDate;
             animalDb.Status = value.Status;
+
+            if (!string.IsNullOrEmpty(value.AnimalPhoto))
+            {
+                animalDb.AnimalPhoto = Convert.FromBase64String(value.AnimalPhoto);
+            }
 
             _unitOfWork.AnimalRepository.Update(animalDb);
             _unitOfWork.Save();

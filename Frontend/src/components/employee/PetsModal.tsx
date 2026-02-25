@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { toast } from "sonner"
 
 import {
   Dialog,
@@ -21,6 +22,7 @@ type PetFormData = {
   weight: string
   height: string
   status: string
+  animalPhoto: string | null
 }
 
 type EditPetData = PetFormData & { id: number }
@@ -30,9 +32,10 @@ type PetsModalProps = {
   onOpenChange: (open: boolean) => void
   onSubmit: (formData: PetFormData) => Promise<void>
   initialData?: EditPetData
+  status: string[]
 }
 
-export function PetsModal({ open, onOpenChange, onSubmit, initialData }: PetsModalProps) {
+export function PetsModal({ open, onOpenChange, onSubmit, initialData, status }: PetsModalProps) {
   const isEditing = !!initialData
 
   const [form, setForm] = useState({
@@ -43,27 +46,56 @@ export function PetsModal({ open, onOpenChange, onSubmit, initialData }: PetsMod
     status: initialData?.status ?? "",
   })
 
-  //handles submission of form data to api
+  const [imageBase64, setImageBase64] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) {
+      setImageBase64(null)
+      setImagePreview(null)
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const dataUrl = reader.result as string
+      setImagePreview(dataUrl)
+      const base64Only = dataUrl.split(",")[1]
+      setImageBase64(base64Only)
+    }
+    reader.readAsDataURL(file)
+  }
+
   async function handleSubmit() {
-    await onSubmit({
-      name: form.name,
-      breed: form.breed,
-      weight: form.weight,
-      height: form.height,
-      status: form.status,
-    })
+    try {
+      await onSubmit({
+        name: form.name,
+        breed: form.breed,
+        weight: form.weight,
+        height: form.height,
+        status: form.status,
+        animalPhoto: imageBase64,
+      })
 
-    //resets form data
-    setForm({
-      name: "",
-      breed: "",
-      weight: "",
-      height: "",
-      status: "",
-    })
+      toast.success(
+        isEditing ? "Pet updated successfully!" : "Pet saved successfully!"
+      )
 
-    //closes modal
-    onOpenChange(false)
+      setForm({
+        name: "",
+        breed: "",
+        weight: "",
+        height: "",
+        status: "",
+      })
+      setImageBase64(null)
+      setImagePreview(null)
+
+      onOpenChange(false)
+    } catch {
+      toast.error("Something went wrong. Please try again.")
+    }
   }
 
   return (
@@ -123,11 +155,27 @@ export function PetsModal({ open, onOpenChange, onSubmit, initialData }: PetsMod
               onChange={(e) => setForm({ ...form, status: e.target.value })}
               className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
-              <option value="" disabled>Select status</option>
-              <option value="Available">Available</option>
-              <option value="Pending">Pending</option>
-              <option value="Fostered">Fostered</option>
+              
+              
+              {status.map(s => (<option value={s}> {s} </option>))}
+                
             </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="pet-image">Pet Photo</Label>
+            <Input
+              id="pet-image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-2 h-32 w-32 rounded-md object-cover border"
+              />
+            )}
           </div>
         </div>
         <DialogFooter>

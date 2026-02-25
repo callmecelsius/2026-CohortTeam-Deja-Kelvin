@@ -5,7 +5,8 @@ export interface Animal {
     weight: number | null;
     height: number | null;
     intakeDate: string | null;
-    status: string | null;
+    status: string
+    animalPhoto: string | null; //base64-encoded
   }
 
   //creates a new animal typeobject without the id property

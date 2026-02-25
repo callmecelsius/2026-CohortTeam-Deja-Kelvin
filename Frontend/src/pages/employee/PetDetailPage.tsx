@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAnimalById } from "@/api/animal";
-import { PetDetailCard } from "@/components/PetDetailCard";
+import { PetDetailCard } from "@/components/employee/PetDetailCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { Animal } from "../../../types/animalType";
