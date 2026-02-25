@@ -8,7 +8,7 @@ Table User {
   FirstName text
   LastName text
   EmployeeId integer [null] 
-  PhoneNumber integer 
+  PhoneNumber text  
   Email text
   Address text
   City text
