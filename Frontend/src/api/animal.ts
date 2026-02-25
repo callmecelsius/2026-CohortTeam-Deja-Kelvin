@@ -1,8 +1,18 @@
 import api from "./axios";
 import type { CreateAnimalDto } from "../../types/animalType";
+import type { Animal } from "../../types/animalType";
 
-export const getAnimals = async () => {
-  const res = await api.get("/Animal");
+export const getAnimals  = async() => {
+  const res = await api.get<Promise<Animal[]>>("/Animal");
+  
+  
+  return res.data;
+
+
+};
+
+export const getAnimalById = async (id: number) => {
+  const res = await api.get(`/Animal/${id}`);
   return res.data;
 };
 

@@ -1,4 +1,4 @@
-﻿namespace Backend.Dtos
+namespace Backend.Dtos
 {
     public class PostAnimalDto
     {
@@ -13,5 +13,7 @@
         public DateTime? IntakeDate { get; set; }
 
         public string? Status { get; set; }
+
+        public string? AnimalPhoto { get; set; }
     }
 }
