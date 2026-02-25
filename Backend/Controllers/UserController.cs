@@ -96,6 +96,7 @@ namespace Backend.Controllers
                     Zip = userDto.Zip,
                     CreatedOn = DateTime.UtcNow,
                     UpdatedOn = DateTime.UtcNow
+						  
                 };
 
                 _unitOfWork.UserRepository.Insert(user);
