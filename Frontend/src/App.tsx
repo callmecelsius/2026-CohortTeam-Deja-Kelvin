@@ -13,6 +13,8 @@ import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import EmployeeFosterParents from './pages/employee/EmployeeFosterParents';
 import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
+import PetDetailPage from './pages/employee/PetDetailPage';
+import FosterHomesPage from './pages/employee/FosterHomesPage';
 
 function Layout() {
   return (
@@ -79,6 +81,14 @@ const router = createBrowserRouter([
       {
         path: 'employee-pets-page',
         element: <EmployeePets />,
+      },
+      {
+        path: 'employee-pets-page/:id',
+        element: <PetDetailPage />
+      },
+      {
+        path: 'employee-foster-homes-page/',
+        element: <FosterHomesPage/>
       },
     ],
   },

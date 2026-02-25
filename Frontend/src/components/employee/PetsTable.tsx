@@ -1,5 +1,13 @@
 import { getAnimals, updateAnimal, deleteAnimal, createAnimal } from "@/api/animal";
-import { DataTable } from "../shared/DataTable";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import {
   DropdownMenu,
@@ -9,21 +17,39 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Toaster } from "@/components/ui/sonner";
+import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Animal } from "../../../types/animalType";
 import { PetsModal } from "./PetsModal";
 
 export function PetsTable() {
+  const navigate = useNavigate();
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
-
+  const [status, setStatus] = useState<string[]>([])
   //loads pets from database through api
   useEffect(() => {
     async function load() {
       const data = await getAnimals();
       setAnimals(Array.isArray(data) ? data : []);
+
+      const tempStatus: string[] = data.map(animal => animal.status).reduce((acc: string[] , cur : string) => {
+
+        if(acc.includes(cur)){
+          return acc;
+        }
+        
+        acc.push(cur)
+
+        return acc
+
+      },[])
+
+      setStatus(tempStatus)
+
     }
     load();
   }, []);
@@ -46,11 +72,12 @@ export function PetsTable() {
 
   //recieves data from modal and calls api to create or update pet in database
   const handleSubmit = async (formData: {
-    name: string;
-    breed: string;
-    weight: string;
-    height: string;
-    status: string;
+    name: string
+    breed: string
+    weight: string
+    height: string
+    status: string
+    animalPhoto: string | null
   }) => {
     try {
       if (editingAnimal) {
@@ -61,6 +88,7 @@ export function PetsTable() {
           height: formData.height ? parseFloat(formData.height) : null,
           intakeDate: editingAnimal.intakeDate ?? new Date().toISOString(),
           status: formData.status || null,
+          animalPhoto: formData.animalPhoto,
         });
       } else {
         await createAnimal({
@@ -70,6 +98,7 @@ export function PetsTable() {
           height: formData.height ? parseFloat(formData.height) : null,
           intakeDate: new Date().toISOString(),
           status: formData.status || null,
+          animalPhoto: formData.animalPhoto,
         });
       }
 
@@ -80,95 +109,18 @@ export function PetsTable() {
       console.error("Error saving pet:", error);
     }
   };
-  const columns = [
-    {
-      header: "Actions",
-      cell: (animal: Animal) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
-            >
-              <MoreVertical className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem
-              onClick={() => handleEdit(animal)}
-              className="cursor-pointer"
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(animal.id)}
-              className="text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
-    {
-      header: "Name",
-      cell: (animal: Animal) => (
-        <span className="font-medium text-gray-900 dark:text-white">
-          {animal.name || <span className="text-gray-400 italic">N/A</span>}
-        </span>
-      ),
-    },
-    {
-      header: "Breed",
-      cell: (animal: Animal) =>
-        animal.breed || <span className="text-gray-400 italic">N/A</span>,
-    },
-    {
-      header: "Weight",
-      cell: (animal: Animal) =>
-        animal.weight ? (
-          `${animal.weight} lbs`
-        ) : (
-          <span className="text-gray-400 italic">N/A</span>
-        ),
-    },
-    {
-      header: "Height",
-      cell: (animal: Animal) =>
-        animal.height ? (
-          `${animal.height} in`
-        ) : (
-          <span className="text-gray-400 italic">N/A</span>
-        ),
-    },
-    {
-      header: "Intake Date",
-      cell: (animal: Animal) =>
-        animal.intakeDate ? (
-          new Date(animal.intakeDate).toLocaleDateString()
-        ) : (
-          <span className="text-gray-400 italic">N/A</span>
-        ),
-    },
-    {
-      header: "Status",
-      cell: (animal: Animal) => (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-          {animal.status || "Unknown"}
-        </span>
-      ),
-    },
-  ];
+
+  const handleView = (animal: Animal) => {
+    navigate(`/employee-pets-page/${animal.id}`);
+  };
 
   return (
-    <div className="w-full p-6 space-y-4">
+    <div className="pets-table-wrapper relative w-full p-6 space-y-6">
+      <Toaster richColors position="top-center" />
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Pets
-        </h2>
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Pets</h2>
+        </div>
         <Button
           onClick={handleAddPet}
           className="bg-[#D9BF86] text-gray-900 hover:bg-[#c9af76] font-semibold px-6 py-2 shadow-md hover:shadow-lg hover:cursor-pointer transition-all duration-200"
@@ -177,12 +129,102 @@ export function PetsTable() {
         </Button>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={animals}
-        emptyMessage="No pets found"
-        getRowId={(animal: Animal) => animal.id}
-      />
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden bg-white dark:bg-gray-800">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900">
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Actions</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Name</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Breed</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Weight</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Height</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Intake Date</TableHead>
+              <TableHead className="font-semibold text-gray-700 dark:text-gray-300">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {animals.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-32 text-center text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <p className="text-lg font-medium">No pets found</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              animals.map((animal, index) => (
+                <TableRow
+                  key={animal.id}
+                  className={`
+                    transition-colors duration-150
+                    ${index % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50/50 dark:bg-gray-900/50"}
+                    hover:bg-gray-100 dark:hover:bg-gray-700
+                  `}
+                >
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        >
+                          <MoreVertical className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem
+                          onClick={() => handleView(animal)}
+                          className="cursor-pointer"
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          View
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleEdit(animal)}
+                          className="cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(animal.id)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+
+                  <TableCell className="font-medium text-gray-900 dark:text-white">
+                    {animal.name || <span className="text-gray-400 italic">N/A</span>}
+                  </TableCell>
+                  <TableCell className="text-gray-700 dark:text-gray-300">
+                    {animal.breed || <span className="text-gray-400 italic">N/A</span>}
+                  </TableCell>
+                  <TableCell className="text-gray-700 dark:text-gray-300">
+                    {animal.weight ? `${animal.weight} lbs` : <span className="text-gray-400 italic">N/A</span>}
+                  </TableCell>
+                  <TableCell className="text-gray-700 dark:text-gray-300">
+                    {animal.height ? `${animal.height} in` : <span className="text-gray-400 italic">N/A</span>}
+                  </TableCell>
+                  <TableCell className="text-gray-700 dark:text-gray-300">
+                    {animal.intakeDate ? new Date(animal.intakeDate).toLocaleDateString() : <span className="text-gray-400 italic">N/A</span>}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                      {animal.status || "Unknown"}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <PetsModal
         key={editingAnimal?.id ?? "new"}
@@ -201,9 +243,13 @@ export function PetsTable() {
                 weight: String(editingAnimal.weight ?? ""),
                 height: String(editingAnimal.height ?? ""),
                 status: editingAnimal.status ?? "",
+                animalPhoto: null,
               }
             : undefined
-        }
+          
+        
+          }
+        status = {status}
       />
     </div>
   );

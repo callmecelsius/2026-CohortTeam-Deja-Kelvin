@@ -59,7 +59,7 @@ namespace Backend.Controllers
                
                 var product = new Product
                 {
-                    CategoryId = productDto.Id,
+                    CategoryId = productDto.CategoryId,
                     Description = productDto.Description,
                     UnitPrice = productDto.UnitPrice
 
@@ -68,7 +68,12 @@ namespace Backend.Controllers
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
-                return Ok("product inserted successfully.");
+                return Ok(new
+                {
+                    id = product.Id,
+                    message = "Product inserted successfully.",
+                    product = product
+                });
 
             }
             catch (Exception)

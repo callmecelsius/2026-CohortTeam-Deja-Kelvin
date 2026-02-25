@@ -8,6 +8,7 @@ namespace Backend.Data
         public void Dispose();
         Repository<Animal> AnimalRepository { get; }
         Repository<AnimalCondition> AnimalConditionRepository { get; }
+        Repository<BehaviorLog> BehaviorLogRepository { get; }
         Repository<FosterParent> FosterParentRepository { get; }
         Repository<Inventory> InventoryRepository { get; }
         Repository<User> UserRepository { get; }
