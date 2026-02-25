@@ -32,7 +32,7 @@ namespace Backend.Data
             }
         }
 
-        public Repository<AnimalCondition> CourseRepository
+        public Repository<AnimalCondition> AnimalConditionRepository
         {
             get
             {

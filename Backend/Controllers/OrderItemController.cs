@@ -25,7 +25,7 @@ namespace Backend.Controllers
         "orderId": 0,
         "productId": 0,
         "quantity": 1,
-        "productName": "testtesttest",
+        "productName": "test",
         "userId": 0,
         "orderComplete": true,
         "dateOrdered": "2026-02-20T00:00:00"
@@ -106,7 +106,7 @@ namespace Backend.Controllers
                 return Ok("orderitem inserted successfully.");
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
@@ -131,7 +131,7 @@ namespace Backend.Controllers
                 _unitOfWork.Save();
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
@@ -147,7 +147,7 @@ namespace Backend.Controllers
                 _unitOfWork.Save();
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
