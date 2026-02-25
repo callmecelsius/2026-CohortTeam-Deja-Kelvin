@@ -88,7 +88,7 @@ namespace Backend.Controllers
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
                     EmployeeId = userDto.EmployeeId,
-                    PhoneNumber = userDto.Phone,
+                    PhoneNumber = (int?)userDto.Phone,
                     Email = userDto.Email,
                     Address = userDto.Address,
                     City = userDto.City,
@@ -96,7 +96,7 @@ namespace Backend.Controllers
                     Zip = userDto.Zip,
                     CreatedOn = DateTime.UtcNow,
                     UpdatedOn = DateTime.UtcNow
-						  
+
                 };
 
                 _unitOfWork.UserRepository.Insert(user);
