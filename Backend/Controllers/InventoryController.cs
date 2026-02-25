@@ -2,6 +2,7 @@ using Backend.Data;
 using Backend.Data.Models;
 using Backend.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
@@ -38,18 +39,19 @@ namespace Backend.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] PostInventoryDto value)
         {
+
             var newInventory = new Inventory()
             {
                 ProductId = value.ProductId,
                 QuantityOnHand = value.QuantityOnHand,
                 ReorderLevel = value.ReorderLevel,
-                LastUpdated = value.LastUpdated
+                LastUpdated = DateTime.UtcNow
             };
 
             _unitOfWork.InventoryRepository.Insert(newInventory);
             _unitOfWork.Save();
             _unitOfWork.Dispose();
-            return CreatedAtAction(nameof(Get), newInventory);
+            return Ok("inventory inserted successfully.");
         }
 
         [HttpPut("{id}")]
@@ -64,7 +66,7 @@ namespace Backend.Controllers
             inventoryDb.ProductId = value.ProductId;
             inventoryDb.QuantityOnHand = value.QuantityOnHand;
             inventoryDb.ReorderLevel = value.ReorderLevel;
-            inventoryDb.LastUpdated = value.LastUpdated;
+            inventoryDb.LastUpdated = DateTime.UtcNow;
 
             _unitOfWork.InventoryRepository.Update(inventoryDb);
             _unitOfWork.Save();
