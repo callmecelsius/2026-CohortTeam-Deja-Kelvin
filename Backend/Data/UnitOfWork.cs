@@ -7,6 +7,7 @@ namespace Backend.Data
         private AppDbContext _context;
         private Repository<Animal> animalRepository;
         private Repository<AnimalCondition> animalConditionRepository;
+        private Repository<BehaviorLog> behaviorLogRepository;
         private Repository<FosterParent> fosterParentRepository;
         private Repository<Inventory> inventoryRepository;
         private Repository<User> userRepository;
@@ -42,6 +43,19 @@ namespace Backend.Data
                     this.animalConditionRepository = new Repository<AnimalCondition>(_context);
                 }
                 return animalConditionRepository;
+            }
+        }
+
+        public Repository<BehaviorLog> BehaviorLogRepository
+        {
+            get
+            {
+
+                if (this.behaviorLogRepository == null)
+                {
+                    this.behaviorLogRepository = new Repository<BehaviorLog>(_context);
+                }
+                return behaviorLogRepository;
             }
         }
 

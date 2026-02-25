@@ -88,7 +88,7 @@ namespace Backend.Controllers
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
                     EmployeeId = userDto.EmployeeId,
-                    PhoneNumber = userDto.PhoneNumber,
+                    PhoneNumber = userDto.Phone,
                     Email = userDto.Email,
                     Address = userDto.Address,
                     City = userDto.City,
