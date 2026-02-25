@@ -43,7 +43,7 @@ namespace Backend.Controllers
         /*http://localhost:5282/api/Product/
             {
                 "CategoryId" :123,
-                "Description":"testtesttesttesttesttesttesttest",
+                "Description":"test",
                 "UnitPrice": 100
             }
          */
@@ -76,7 +76,7 @@ namespace Backend.Controllers
                 });
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
@@ -102,7 +102,7 @@ namespace Backend.Controllers
                 _unitOfWork.Save();
                 return Ok();
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
         }
@@ -116,7 +116,7 @@ namespace Backend.Controllers
             _unitOfWork.Save();
             return Ok();
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
         }

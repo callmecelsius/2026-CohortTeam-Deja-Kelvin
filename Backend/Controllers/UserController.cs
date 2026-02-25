@@ -21,10 +21,10 @@ namespace Backend.Controllers
 
         [HttpGet]
         public IEnumerable<User> Get()
-        {
+   {
             var userTemp = _unitOfWork.UserRepository.Get();
             return userTemp;
-        }
+        }     
 
         /*
          {
@@ -85,8 +85,8 @@ namespace Backend.Controllers
                 }
                 var user = new User
                 {
-                    FirstName = userDto.Firstname,
-                    LastName = userDto.Lastname,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
                     EmployeeId = userDto.EmployeeId,
                     PhoneNumber = userDto.Phone,
                     Email = userDto.Email,
@@ -104,7 +104,7 @@ namespace Backend.Controllers
                 return Ok("user registered successfully.");
 
             }            
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
