@@ -1,116 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { ReactNode } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useEffect, useState } from "react";
-
-import { getFosterHomes } from "@/api/fosterhome";
+import { DataTable } from "@/components/shared/DataTable";
 import type { FosterHome } from "types/FosterHomeType";
 
+const COLUMNS = [
+  { header: "Home Name", accessor: "HomeName" },
+  { header: "Address", accessor: "Address" },
+  { header: "Capacity", accessor: "Capacity" },
+];
 
-export function FosterHomesTable({
-  data,
-  title,
-  emptyMessage = "No data found",
-  getRowId,
-}: {
-  columns: { header: string; accessor?: string; cell?: (row: any) => ReactNode }[];
-  data: any[];
-  title?: string;
-  emptyMessage?: string;
-  getRowId?: (row: any, index: number) => string | number;
-}) {
+const FAKE_FOSTER_HOMES: FosterHome[] = [
+  { id: 1, HomeName: "Sunrise Foster Home", Address: "123 Oak St, Dallas TX", Capacity: 2 },
+  { id: 2, HomeName: "Maple Grove House", Address: "456 Maple Ave, Dallas TX", Capacity: 1 },
+  { id: 3, HomeName: "Riverside Care", Address: "789 River Rd, Dallas TX", Capacity: 3 },
+];
 
-    //create state
-
-     const [columns,setColumns] = useState<FosterHome[]>([])
-
-    //useeffect() for foster homes
-    useEffect(() => {
-        async function load() {
-          const data = await getFosterHomes();
-          setColumns(Array.isArray(data) ? data : []);
-          
-          console.log(data)
-
-        }load();
-
-    })
-
-    
-
+export function FosterHomesTable() {
   return (
-    <div className="w-full space-y-6">
-      {title && (
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {title}
-        </h2>
-      )}
-
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden bg-white dark:bg-gray-800">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900">
-              {columns.map((col, i) => (
-                <TableHead
-                  key={i}
-                  className="font-semibold text-gray-700 dark:text-gray-300"
-                >
-                  {col.header}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-32 text-center text-gray-500 dark:text-gray-400"
-                >
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <p className="text-lg font-medium">{emptyMessage}</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              data.map((row, rowIndex) => (
-                <TableRow
-                  key={getRowId ? getRowId(row, rowIndex) : rowIndex}
-                  className={`
-                    transition-colors duration-150
-                    ${rowIndex % 2 === 0
-                      ? "bg-white dark:bg-gray-800"
-                      : "bg-gray-50/50 dark:bg-gray-900/50"
-                    }
-                    hover:bg-gray-100 dark:hover:bg-gray-700
-                  `}
-                >
-                  {columns.map((col, colIndex) => (
-                    <TableCell
-                      key={colIndex}
-                      className="text-gray-700 dark:text-gray-300"
-                    >
-                      {col.cell
-                        ? col.cell(row)
-                        : col.accessor != null
-                          ? String(row[col.accessor] ?? "")
-                          : null}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+    <div className="relative w-full p-6 space-y-6">
+      <DataTable
+        columns={COLUMNS}
+        data={FAKE_FOSTER_HOMES}
+      />
     </div>
   );
 }
