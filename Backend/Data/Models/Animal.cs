@@ -21,6 +21,8 @@ public partial class Animal
 
     public byte[]? AnimalPhoto { get; set; }
 
+    public string? Type { get; set; }
+
     public virtual ICollection<AnimalCondition> AnimalConditions { get; set; } = new List<AnimalCondition>();
 
     public virtual ICollection<BehaviorLog> BehaviorLogs { get; set; } = new List<BehaviorLog>();

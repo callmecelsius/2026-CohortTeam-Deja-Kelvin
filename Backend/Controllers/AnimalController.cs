@@ -50,6 +50,7 @@ namespace Backend.Controllers
             var newAnimal = new Animal()
             {
                 Name = value.Name,
+                Type = value.Type,
                 Breed = value.Breed,
                 Weight = value.Weight,
                 Height = value.Height,
@@ -75,6 +76,7 @@ namespace Backend.Controllers
             }
 
             animalDb.Name = value.Name;
+            animalDb.Type = value.Type;
             animalDb.Breed = value.Breed;
             animalDb.Weight = value.Weight;
             animalDb.Height = value.Height;
