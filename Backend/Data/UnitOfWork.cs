@@ -155,11 +155,11 @@ namespace Backend.Data
         {
             get
             {
-                if (this.orderitemRepository == null)
+                if (this.orderItemRepository == null)
                 {
-                    this.orderitemRepository = new Repository<OrderItem>(_context);
+                    this.orderItemRepository = new Repository<OrderItem>(_context);
                 }
-                return orderitemRepository;
+                return orderItemRepository;
             }
         }
 
