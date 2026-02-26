@@ -13,7 +13,7 @@ public partial class User
 
     public int? EmployeeId { get; set; }
 
-    public int? PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public string? Email { get; set; }
 
