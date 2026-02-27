@@ -1,6 +1,8 @@
+
 export interface FosterHome {
   id: number;
-  HomeName: string;
+  homeName: string;
   Address: string;
   Capacity: number;
+  fosterParents?: string;
 }
