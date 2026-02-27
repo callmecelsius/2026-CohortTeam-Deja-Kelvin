@@ -27,7 +27,7 @@ export function FosterHomesTable() {
       const homesWithParents = homes.map((home) => {
         const homeParents = parentsWithNames.filter((p) => p.fosterHomeId === home.id);
 
-        const parentNames = homeParents.map((p) => p.userName).join(", ");
+        const parentNames = homeParents.map((p) => p.userName).join(" ");
         return {
           ...home,
           fosterParents: parentNames,
