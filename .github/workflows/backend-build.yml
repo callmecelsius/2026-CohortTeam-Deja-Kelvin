@@ -3,9 +3,6 @@ name: Backend Build Validation
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - "Backend/**"
-      - "gitapet.sln"
   pull_request:
     branches: [ "main" ]
     paths:
