@@ -17,10 +17,43 @@ namespace Backend.Controllers
     }
 
     [HttpGet]
-    public IEnumerable<FosterParent> Get()
-    {
-      var fosterParentTemp = _unitOfWork.FosterParentRepository.Get();
-      return fosterParentTemp;
+    public IEnumerable<FosterUserGetDto> Get()
+    {            
+        var fosterParentTemp = _unitOfWork.FosterParentRepository.Get();
+        var fosterHomesList = _unitOfWork.FosterHomeRepository.Get();
+        var usersList = _unitOfWork.UserRepository.Get();
+
+        fosterParentTemp.ToList().ForEach(fp =>
+        {
+            fp.FosterHome = fosterHomesList.Where(fh => fh.Id == fp.FosterHomeId).FirstOrDefault();
+            fp.User = usersList.Where(u => u.Id == fp.UserId).FirstOrDefault();
+        });
+
+        return fosterParentTemp.Select(fp => new FosterUserGetDto()
+        {
+            Id = fp.UserId,
+            FirstName = fp.User?.FirstName,
+            LastName = fp.User?.LastName,
+            Phone = fp.User?.PhoneNumber,
+            Email = fp.User?.Email,
+            Address = fp.User?.Address,
+            City = fp.User?.City,
+            State = fp.User?.State,
+            Zip = fp.User?.Zip,
+            FosterParent = new FosterParentGetDto()
+            {
+                UserId = fp.UserId,
+                FosterHomeId = fp.FosterHomeId,
+                ApprovedDate = fp.ApprovedDate,
+                Status = fp.Status,
+                FosterHome = new FosterHomeDto()
+                {
+                    Id = fp.FosterHome?.Id,
+                    HomeName = fp.FosterHome?.HomeName,
+                    Address = fp.FosterHome?.Address,
+                }
+            }
+        }).ToList();
     }
 
     [HttpGet("{id}")]

@@ -5,7 +5,7 @@ namespace Backend.Data.Models;
 
 public partial class FosterParent
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     public int? UserId { get; set; }
 
