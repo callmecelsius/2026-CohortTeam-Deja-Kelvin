@@ -1,25 +1,56 @@
+import { getFosterHomes } from "@/api/fosterhome";
+import { getFosterParents } from "@/api/fosterparent";
+import { getUsers } from "@/api/user";
 import { DataTable } from "@/components/shared/DataTable";
+import { useEffect, useState } from "react";
 import type { FosterHome } from "types/FosterHomeType";
 
-const COLUMNS = [
-  { header: "Home Name", accessor: "HomeName" },
-  { header: "Address", accessor: "Address" },
-  { header: "Capacity", accessor: "Capacity" },
-];
-
-const FAKE_FOSTER_HOMES: FosterHome[] = [
-  { id: 1, HomeName: "Sunrise Foster Home", Address: "123 Oak St, Dallas TX", Capacity: 2 },
-  { id: 2, HomeName: "Maple Grove House", Address: "456 Maple Ave, Dallas TX", Capacity: 1 },
-  { id: 3, HomeName: "Riverside Care", Address: "789 River Rd, Dallas TX", Capacity: 3 },
-];
-
 export function FosterHomesTable() {
+  const [fosterHomes, setFosterHomes] = useState<FosterHome[]>([]);
+  const [columns, setColumns] = useState<Array<{ header: string; accessor: string }>>([]);
+
+  useEffect(() => {
+    async function load() {
+      const homes = await getFosterHomes();
+      const parents = await getFosterParents();
+      const users = await getUsers();
+      console.log(parents)
+
+      const parentsWithNames = parents.map((parent) => {
+        const user = users.find((u) => u.id === parent.userId);
+        return {
+          ...parent,
+          userName: user ? `${user.firstName} ${user.lastName}` : null,
+        };
+      });
+      
+      const homesWithParents = homes.map((home) => {
+        const homeParents = parentsWithNames.filter((p) => p.fosterHomeId === home.id);
+
+        const parentNames = homeParents.map((p) => p.userName).join(" ");
+        return {
+          ...home,
+          fosterParents: parentNames,
+        };
+      });
+      
+      setFosterHomes(homesWithParents);
+
+
+      const dynamicColumns = Object.keys(homesWithParents[0])
+        .filter((e) => !e.includes("fosterAssignments"))
+        .map((key) => ({
+          header: key,
+          accessor: key,
+        }));
+      setColumns(dynamicColumns);
+    }
+    load();
+  }, []);
+
   return (
     <div className="relative w-full p-6 space-y-6">
-      <DataTable
-        columns={COLUMNS}
-        data={FAKE_FOSTER_HOMES}
-      />
+      <DataTable columns={columns} data={fosterHomes} />
     </div>
   );
 }
