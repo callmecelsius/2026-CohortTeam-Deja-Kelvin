@@ -5,16 +5,17 @@ namespace Backend.Data
     public class UnitOfWork : IDisposable, IUnitOfWork
     {       
         private AppDbContext _context;
-        private Repository<Animal> animalRepository;
-        private Repository<AnimalCondition> animalConditionRepository;
-        private Repository<BehaviorLog> behaviorLogRepository;
-        private Repository<FosterParent> fosterParentRepository;
-        private Repository<Inventory> inventoryRepository;
-        private Repository<User> userRepository;
-        private Repository<Product> productRepository;
-        private Repository<ProductCategory> productCategoryRepository;        
-        private Repository<Order> orderRepository;
-        private Repository<OrderItem> orderitemRepository;
+        private Repository<Animal>? animalRepository;
+        private Repository<AnimalCondition>? animalConditionRepository;
+        private Repository<BehaviorLog>? behaviorLogRepository;
+        private Repository<FosterParent>? fosterParentRepository;
+        private Repository<FosterHome>? fosterHomeRepository;
+        private Repository<Inventory>? inventoryRepository;
+        private Repository<User>? userRepository;
+        private Repository<Product>? productRepository;
+        private Repository<ProductCategory>? productCategoryRepository;
+        private Repository<Order>? orderRepository;
+        private Repository<OrderItem>? orderItemRepository;
 
         public UnitOfWork(AppDbContext context) 
         { 
@@ -69,6 +70,18 @@ namespace Backend.Data
                     this.fosterParentRepository = new Repository<FosterParent>(_context);
                 }
                 return fosterParentRepository;
+            }
+        }
+
+        public Repository<FosterHome> FosterHomeRepository
+        {
+            get
+            {
+                if (this.fosterHomeRepository == null)
+                {
+                    this.fosterHomeRepository = new Repository<FosterHome>(_context);
+                }
+                return fosterHomeRepository;
             }
         }
 
@@ -142,11 +155,11 @@ namespace Backend.Data
         {
             get
             {
-                if (this.orderitemRepository == null)
+                if (this.orderItemRepository == null)
                 {
-                    this.orderitemRepository = new Repository<OrderItem>(_context);
+                    this.orderItemRepository = new Repository<OrderItem>(_context);
                 }
-                return orderitemRepository;
+                return orderItemRepository;
             }
         }
 

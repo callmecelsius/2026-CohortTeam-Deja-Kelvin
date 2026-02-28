@@ -12,24 +12,14 @@ import {
 export function DataTable({
   columns,
   data,
-  title,
-  emptyMessage = "No data found",
   getRowId,
 }: {
   columns: { header: string; accessor?: string; cell?: (row: any) => ReactNode }[];
   data: any[];
-  title?: string;
-  emptyMessage?: string;
   getRowId?: (row: any, index: number) => string | number;
 }) {
   return (
     <div className="w-full space-y-6">
-      {title && (
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {title}
-        </h2>
-      )}
-
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden bg-white dark:bg-gray-800">
         <Table>
           <TableHeader>
@@ -53,7 +43,7 @@ export function DataTable({
                   className="h-32 text-center text-gray-500 dark:text-gray-400"
                 >
                   <div className="flex flex-col items-center justify-center space-y-2">
-                    <p className="text-lg font-medium">{emptyMessage}</p>
+                    <p className="text-lg font-medium">No data found</p>
                   </div>
                 </TableCell>
               </TableRow>
