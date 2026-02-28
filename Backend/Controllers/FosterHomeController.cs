@@ -34,6 +34,32 @@ namespace Backend.Controllers
       return Ok(fosterHomeTemp);
     }
 
+    [HttpGet("{id}/availability")]
+    public ActionResult<FosterHomeAvailabilityDto> GetAvailability(int id)
+    {
+      var fosterHome = _unitOfWork.FosterHomeRepository.GetByID(id);
+      if (fosterHome == null)
+      {
+        return NotFound();
+      }
+
+      var occupiedSlots = _unitOfWork.FosterParentRepository
+        .Get(fosterparent => fosterparent.FosterHomeId == id)
+        .Count();
+
+      var capacity = fosterHome.Capacity ?? 0;
+
+      var result = new FosterHomeAvailabilityDto
+      {
+        FosterHomeId = id,
+        Capacity = capacity,
+        OccupiedSlots = occupiedSlots,
+        Availability = capacity - occupiedSlots
+      };
+
+      return Ok(result);
+    }
+
     [HttpPost]
     public ActionResult Post([FromBody] FosterHomeDto value)
     {
