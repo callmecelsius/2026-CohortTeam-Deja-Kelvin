@@ -101,7 +101,11 @@ namespace Backend.Controllers
                 _unitOfWork.UserRepository.Insert(user);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
-                return Ok("user registered successfully.");
+                return Ok(new
+                {
+                    id = user.Id,
+                    message = "user registered successfully.",
+                });
 
             }            
             catch (Exception)

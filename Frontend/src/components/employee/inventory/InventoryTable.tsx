@@ -1,6 +1,6 @@
 import { getInventory, updateInventory, deleteInventory, updateProduct, getProduct, getCategories, deleteProduct, createInventory, createProduct } from "@/api/inventory";
 import { DataTable } from "@/components/shared/DataTable";
-import type { Inventory, InventoryFlattened,ProductDto,ProductCategoryDto } from "../../../../types/inventoryType";
+import type { Inventory, InventoryFlattened, ProductDto, ProductCategoryDto } from "../../../../types/inventoryType";
 
 
 import {
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InventoryModal } from "./InventoryModal";
+import { toast, Toaster } from "sonner";
 
 // Helper function to flatten inventory data
 const flattenInventory = (
@@ -51,10 +52,10 @@ export function InventoryTable() {
     const data = await getInventory();
     const data_product = await getProduct();
     const data_category = await getCategories();
-    console.log('data',data);
+    console.log('data', data);
     const flattened = Array.isArray(data) ? data.map(item =>
-        flattenInventory(item, data_product, data_category)) : [];
-    
+      flattenInventory(item, data_product, data_category)) : [];
+
     setInventory(flattened);
   };
 
@@ -70,16 +71,16 @@ export function InventoryTable() {
   };
 
   //deletes inventory from database
-  const handleDelete =async (id: number, productId: number) => {
+  const handleDelete = async (id: number, productId: number) => {
     deleteInventory(id);
     deleteProduct(productId);
-    alert("Deleted successfully");
+    toast.success("Deleted successfully");
     await loadInventory();
   };
 
   //opens modal when user clicks add inventory button
-  const handleAddInventory = () => {   
-    setEditingInventory(null); 
+  const handleAddInventory = () => {
+    setEditingInventory(null);
     setIsModalOpen(true);
   };
 
@@ -106,23 +107,23 @@ export function InventoryTable() {
           unitPrice: formData.unitprice,
           id: formData.productid,
         });
-        
-        alert("Updated successfully");
+
+        toast.success("Updated successfully");
       } else {
-          const newProduct = await createProduct({
+        const newProduct = await createProduct({
           categoryId: formData.categoryid,
           description: formData.description,
           unitPrice: formData.unitprice,
         });
-         await createInventory({
+        await createInventory({
           productId: newProduct.id,
-        quantityOnHand: formData.quantityonhand,
-        reorderLevel: formData.reorderlevel,
-            });
-        
-        alert("Inserted successfully");
+          quantityOnHand: formData.quantityonhand,
+          reorderLevel: formData.reorderlevel,
+        });
+
+        toast.success("Inserted successfully");
       }
-      
+
 
       // Refresh table after submission
       await loadInventory();
@@ -133,7 +134,7 @@ export function InventoryTable() {
     }
   };
 
-  
+
   const columns = [
     {
       header: "Actions",
@@ -222,11 +223,12 @@ export function InventoryTable() {
           <span className="text-gray-400 italic">N/A</span>
         ),
     },
-    
+
   ];
 
   return (
     <div className="w-full p-6 space-y-4">
+      <Toaster richColors position="top-center" />
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Inventory
@@ -267,9 +269,9 @@ export function InventoryTable() {
               name: editingInventory.name ?? "",
             }
             : undefined
-        
+
         }
-        isEditing={editingInventory?true:false}
+        isEditing={editingInventory ? true : false}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from "sonner"
 
 import {
   Dialog,
@@ -115,6 +116,9 @@ export function InventoryModal({ open, onOpenChange, onSubmit, initialData, isEd
         name: form.name,
       })
 
+       
+
+
       // Reset form data
       setForm({
         productid: "",
@@ -130,7 +134,7 @@ export function InventoryModal({ open, onOpenChange, onSubmit, initialData, isEd
       onOpenChange(false)
     } catch (error) {
       console.error('Error saving inventory:', error)
-      alert('Error saving inventory. Please try again.')
+      toast.error("Something went wrong. Please try again.")
     } finally {
       setSubmitting(false)
     }
