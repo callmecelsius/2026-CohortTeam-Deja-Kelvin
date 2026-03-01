@@ -1,40 +1,96 @@
 import api from "./axios";
 
-export interface RegistrationData {
+// User creation response
+interface RegistrationData {
     username: string;
     firstname: string;
     lastname: string;
-    phone: number;  // Phone as number
     email: string;
+    phone: string;
     address: string;
     city: string;
     state: string;
     zip: string;
+    fosterHomeId: string;
 }
 
-export interface ApiResponse {
-    success: boolean;
+interface UserResponse {
+    id: number;
     message: string;
-    data?: any;
-    error?: string;
+    user: RegistrationData;
 }
 
-export const registerParent = async (data: Omit<RegistrationData, 'phone'> & { phone: string | number }) => {
+
+interface FosterParentPayload {
+    userId: number;
+    fosterHomeId: string;
+}
+
+interface AvailabilityPayload {
+    availability: number;
+    capacity: number;
+    fosterHomeId: string;
+    occupiedSlots: number;
+}
+
+export const registerParent = async (data: RegistrationData) => {
     try {
-        // Convert phone string to number before sending
-        const registrationData: RegistrationData = {
-            ...data,
-            phone: parseInt(data.phone.toString(), 10),  // Convert to number
-        };
-        
-        console.log("Sending data:", registrationData);
-        const response = await api.post<ApiResponse>("/User", registrationData);
-        return response.data;
+        if (data.fosterHomeId != '') {
+            const AvailabilityPayload = await api.get(`/FosterHome/${data.fosterHomeId}/availability`);
+            console.log('AvailabilityPayload', AvailabilityPayload.data.availability);
+            if (AvailabilityPayload.data.availability > 0) {
+                const userResponse = await api.post<UserResponse>("/User", data);
+                console.log('userResponse', userResponse)
+                const userId = userResponse.data.id;
+                if (!userId) {
+                    throw new Error("Failed to get userid after user registration");
+                }
+                const fosterParentPayload: FosterParentPayload & { status: string } = {
+                    userId,
+                    fosterHomeId: data.fosterHomeId,
+                    status: "Pending",
+                };
+                const fosterParentResponse = await api.post("/FosterParent", fosterParentPayload);
+                console.log("FosterParent record created:", fosterParentResponse.data);
+                return userResponse.data;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            const userResponse = await api.post<UserResponse>("/User", data);
+            console.log('userResponse', userResponse)
+            const userId = userResponse.data.id;
+            if (!userId) {
+                throw new Error("Failed to get userid after user registration");
+            }
+
+        }
+
+
+
     } catch (error: any) {
         console.error("Registration error:", error);
-        throw error.response?.data || { 
-            success: false, 
-            error: error.message || "Registration failed" 
+    }
+};
+
+
+export interface FosterHome {
+    id: string;
+    homeName: string;
+}
+
+export const getFosterHomes = async (): Promise<FosterHome[]> => {
+    try {
+        const response = await api.get<FosterHome[]>("/FosterHome");
+
+        return response.data ?? [];
+    } catch (error: any) {
+        console.error("Fetch foster homes error:", error);
+        throw error.response?.data || {
+            success: false,
+            error: error.message || "Failed to fetch foster homes",
         };
     }
 };

@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast, Toaster } from "sonner"
 import US_STATES from "@/constants/states";
-
+import { useEffect, useState } from "react";
 import {
     Form,
     FormControl,
@@ -15,7 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { registerParent } from "@/api/userregistration";;
+import { registerParent, getFosterHomes, type FosterHome } from "@/api/userregistration";;
 
 const formSchema = z
     .object({
@@ -45,6 +46,7 @@ const formSchema = z
         zip: z
             .string()
             .regex(/^[0-9]{5,6}$/, "5-6 digits only"),
+        fosterHomeId: z.string(),
         // password: z
         //     .string()
         //     .min(8, "At least 8 characters")
@@ -62,6 +64,7 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
+
 const ParentRegistration = () => {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -75,6 +78,7 @@ const ParentRegistration = () => {
             city: "",
             state: "",
             zip: "",
+            fosterHomeId: "",
             //password: "",
             //confirmPassword: "",
         },
@@ -85,28 +89,52 @@ const ParentRegistration = () => {
         try {
             console.log("Form data:", data);
 
-            // Convert phone to number
             const registrationData = {
                 ...data,
-                phone: parseInt(data.phone, 10),  // Convert string to number
             };
 
             console.log("Sending to backend:", registrationData);
 
-            const result = await registerParent(registrationData as any);
-            form.reset();
-            alert("Registration successful!");
+            const result = await registerParent(registrationData);
+            console.log('result', result);
+            if (result == false) {
+                toast.success("Selected foster home is full!");
+            }
+            else {
+                form.reset();
+                toast.success("Registration successful!");
+            }
+
 
         } catch (err: any) {
-            const errorMessage = err.error || err.message || "Registration failed!";
-
             console.error("Registration error:", err);
-            alert(errorMessage);
+            toast.error("Registration failed!");
         }
     };
 
+
+    const [fosterhomes, setFosterhomes] = useState<FosterHome[]>([]);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const loadFosterHomes = async () => {
+            try {
+                setLoading(true);
+                const home = await getFosterHomes();
+                console.log('UI', home)
+                setFosterhomes(home);
+            } catch (error) {
+                console.error("Error fetching foster homes:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFosterHomes();
+    }, []);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-100 to-rose-200 p-4">
+            <Toaster richColors position="top-center" />
             <Card className="w-full max-w-2xl shadow-2xl">
                 <CardHeader className="text-center">
                     <CardTitle className="text-3xl">Parent Registration</CardTitle>
@@ -295,6 +323,37 @@ const ParentRegistration = () => {
                                     )}
                                 />
                             </div>
+                            {/* Foster Home */}
+                            <FormField
+                                control={form.control}
+                                name="fosterHomeId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <Label htmlFor="fosterHomeId">Foster Home</Label>
+                                        <FormControl>
+                                            <select
+                                                {...field}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                                                disabled={loading}
+                                            >
+                                                <option value="">Select a Foster Home</option>
+                                                {fosterhomes.length > 0 ? (
+                                                    fosterhomes.map((fh) => (
+                                                        <option key={fh.id} value={fh.id}>
+                                                            {fh.homeName}
+                                                        </option>
+                                                    ))
+                                                ) : (
+                                                    <option value="">No foster homes available</option>
+                                                )}
+                                            </select>
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
 
                             {/* Password & Confirm Password */}
                             {/* <div className="grid grid-cols-2 gap-4">
