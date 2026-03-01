@@ -9,6 +9,7 @@ const columns = [
   { header: 'Capacity', accessor: 'capacity' },
 ];
 
+
 export function FosterHomesTable() {
   const [fosterHome, setFosterHome] = useState<FosterHome[]>([]);
 
