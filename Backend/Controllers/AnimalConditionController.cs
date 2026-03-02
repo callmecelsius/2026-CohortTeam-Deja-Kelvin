@@ -39,7 +39,7 @@ namespace Backend.Controllers
     public ActionResult GetAnimalSeverity()
     {
       var animalSeverity = _unitOfWork.AnimalConditionRepository
-        .Get(filter: animalCondition => animalCondition.Severity == "High")
+        .Get(filter: animalCondition => animalCondition.Severity.ToLower() == "high")
         .Count();
       
       return Ok( new { animalSeverity });
