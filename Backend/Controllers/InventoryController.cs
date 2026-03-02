@@ -36,6 +36,16 @@ namespace Backend.Controllers
             return Ok(inventoryTemp);
         }
 
+        [HttpGet("quantityonhand")]
+        public ActionResult GetQuantityOnHand()
+        {
+            var quantityOnHand = _unitOfWork.InventoryRepository
+                .Get(filter: inventory => inventory.QuantityOnHand <= 10)
+                .Count();
+            
+            return Ok( new { quantityOnHand });
+        }
+
         [HttpPost]
         public ActionResult Post([FromBody] PostInventoryDto value)
         {
