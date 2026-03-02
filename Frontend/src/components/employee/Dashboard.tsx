@@ -27,9 +27,7 @@ export default function Dashboard() {
           getInventoryQuantityonHand(),
           getAnimalConditionSeverity()
         ])
-
-
-        // Adjust depending on your API response format
+       
         setPendingCount(pendingData.status)
         setLowInventoryCount(inventoryData.quantityOnHand)
         setHighSeverityCount(severityData.animalSeverity)
