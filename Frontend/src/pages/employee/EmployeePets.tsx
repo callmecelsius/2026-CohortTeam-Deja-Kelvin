@@ -1,8 +1,10 @@
-import { PetsTable } from "@/components/employee/PetsTable"
+import { PetsTable } from "@/components/employee/pets/PetsTable"
+import { Toaster } from "@/components/ui/sonner"
 
 export default function EmployeePets() {
   return (
-    <div className="p-6">
+    <div>
+      <Toaster richColors position="top-center" />
       <PetsTable />
     </div>
   )

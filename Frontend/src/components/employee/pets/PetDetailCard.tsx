@@ -14,7 +14,7 @@ import {
   Brain,
   ImageIcon,
 } from "lucide-react";
-import type { Animal } from "../../../types/animalType";
+import type { Animal } from "../../../../types/animalType";
 
 type PetDetailCardProps = {
   animal: Animal;

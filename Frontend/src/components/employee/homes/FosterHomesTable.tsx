@@ -49,7 +49,10 @@ export function FosterHomesTable() {
   }, []);
 
   return (
-    <div className="relative w-full p-6 space-y-6">
+    <div className="w-full p-6 space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Foster Homes</h2>
+      </div>
       <DataTable columns={columns} data={fosterHomes} />
     </div>
   );

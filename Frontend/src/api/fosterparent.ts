@@ -1,18 +1,9 @@
 import api from "./axios";
-import type { FosterParent } from "types/FosterParentType";
+import type { FosterParent, FosterUser } from "types/FosterParentType";
+
 
 export const getFosterParents = async () => {
-  const res = await api.get<FosterParent[]>("/FosterParent");
-  return res.data;
-};
-
-export const getFosterParentById = async (id: number) => {
-  const res = await api.get(`/FosterParent/${id}`);
-  return res.data;
-};
-
-export const createFosterParent = async (fosterParent: FosterParent) => {
-  const res = await api.post("/FosterParent", fosterParent);
+  const res = await api.get<FosterUser[]>('/FosterParent');
   return res.data;
 };
 

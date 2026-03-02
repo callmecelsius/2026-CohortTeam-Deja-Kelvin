@@ -1,17 +1,10 @@
 import { getInventory, updateInventory, deleteInventory, updateProduct, getProduct, getCategories, deleteProduct, createInventory, createProduct } from "@/api/inventory";
 import { DataTable } from "@/components/shared/DataTable";
+import { ActionsDropdown } from "@/components/shared/ActionsDropdown";
 import type { Inventory, InventoryFlattened,ProductDto,ProductCategoryDto } from "../../../../types/inventoryType";
 
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InventoryModal } from "./InventoryModal";
 
@@ -138,33 +131,21 @@ export function InventoryTable() {
     {
       header: "Actions",
       cell: (item: InventoryFlattened) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
-            >
-              <MoreVertical className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem
-              onClick={() => handleEdit(item)}
-              className="cursor-pointer"
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(item.id, item.productid)}
-              className="text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ActionsDropdown
+          actions={[
+            {
+              label: "Edit",
+              icon: <Pencil className="mr-2 h-4 w-4" />,
+              onClick: () => handleEdit(item),
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="mr-2 h-4 w-4" />,
+              onClick: () => handleDelete(item.id, item.productid),
+              className: "text-red-600",
+            },
+          ]}
+        />
       ),
     },
     //  {
