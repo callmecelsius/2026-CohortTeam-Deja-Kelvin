@@ -1,8 +1,8 @@
 namespace Backend.Dtos
 {
-  public class BehaviorLogDto
+  public class BehaviorLogPutDto
   {
-    public int? Id { get; set; }
+    
     public int? AnimalId { get; set; }
     public int? ReportedByUserId { get; set; }
     public string? BehaviorType { get; set; }
