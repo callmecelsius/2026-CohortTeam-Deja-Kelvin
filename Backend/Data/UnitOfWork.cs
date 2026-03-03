@@ -8,6 +8,7 @@ namespace Backend.Data
         private Repository<Animal>? animalRepository;
         private Repository<AnimalCondition>? animalConditionRepository;
         private Repository<BehaviorLog>? behaviorLogRepository;
+        private Repository<FosterAssignment>? fosterAssignmentRepository;
         private Repository<FosterParent>? fosterParentRepository;
         private Repository<FosterHome>? fosterHomeRepository;
         private Repository<Inventory>? inventoryRepository;
@@ -57,6 +58,19 @@ namespace Backend.Data
                     this.behaviorLogRepository = new Repository<BehaviorLog>(_context);
                 }
                 return behaviorLogRepository;
+            }
+        }
+
+        public Repository<FosterAssignment> FosterAssignmentRepository
+        {
+            get
+            {
+
+                if (this.fosterAssignmentRepository == null)
+                {
+                    this.fosterAssignmentRepository = new Repository<FosterAssignment>(_context);
+                }
+                return fosterAssignmentRepository;
             }
         }
 
