@@ -9,6 +9,7 @@ namespace Backend.Data
         Repository<Animal> AnimalRepository { get; }
         Repository<AnimalCondition> AnimalConditionRepository { get; }
         Repository<BehaviorLog> BehaviorLogRepository { get; }
+        Repository<FosterAssignment> FosterAssignmentRepository { get; }
         Repository<FosterParent> FosterParentRepository { get; }
         Repository<FosterHome> FosterHomeRepository { get; }
         Repository<Inventory> InventoryRepository { get; }
