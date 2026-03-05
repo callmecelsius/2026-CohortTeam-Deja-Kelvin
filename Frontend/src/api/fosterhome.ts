@@ -6,3 +6,12 @@ export const getFosterHomes = async () => {
   const res = await api.get<Promise<FosterHome[]>>('/FosterHome');
   return res.data;
 };
+
+export const createHome = async (homeData: {
+  homeName: string;
+  Address: string;
+  Capacity: number;
+}) => {
+  const res = await api.post('/FosterHome', homeData);
+  return res.data;
+};
