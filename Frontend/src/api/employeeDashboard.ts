@@ -13,5 +13,6 @@ export const getInventoryQuantityonHand= async()=>{
 
 export const getAnimalConditionSeverity= async()=>{
     const response = await api.get(`/AnimalCondition/severity`) ;
+    console.log(response.data);
     return response.data;
 }
