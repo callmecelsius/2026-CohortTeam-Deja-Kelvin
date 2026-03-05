@@ -15,6 +15,8 @@ import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
 import PetDetailPage from './pages/employee/PetDetailPage';
 import FosterHomesPage from './pages/employee/FosterHomesPage';
+import FosterParentLoginPage from './pages/FosterParentLoginPage';
+import EmployeeLoginPage from './pages/EmployeeLoginPage';
 
 function Layout() {
   return (
@@ -39,6 +41,15 @@ const router = createBrowserRouter([
       {
         path: 'parent-registration',
         element: <ParentRegistration />,
+      },
+      //Login Pages
+      {
+        path: 'foster-login',
+        element: <FosterParentLoginPage />,
+      },
+      {
+        path: 'employee-login',
+        element: <EmployeeLoginPage />,
       },
     ],
   },
