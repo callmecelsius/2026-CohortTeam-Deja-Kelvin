@@ -128,7 +128,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <Button
           onClick={() => onAddToCart(product)}
           disabled={isOutOfStock}
-          className="w-full bg-gray-800 hover:bg-gray-700 text-white disabled:opacity-50"
+          className="w-full bg-gray-800 hover:bg-gray-700 text-white disabled:opacity-50 hover:cursor-pointer"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}

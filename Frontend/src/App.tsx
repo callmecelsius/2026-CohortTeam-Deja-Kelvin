@@ -15,6 +15,7 @@ import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
 import PetDetailPage from './pages/employee/PetDetailPage';
 import FosterHomesPage from './pages/employee/FosterHomesPage';
+import EmployeeOrders from './pages/employee/EmployeeOrders';
 
 function Layout() {
   return (
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: 'employee-foster-homes-page/',
         element: <FosterHomesPage/>
+      },
+      {
+        path: 'employee-orders-page',
+        element: <EmployeeOrders />
       },
     ],
   },

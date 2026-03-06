@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Users, AlertTriangle, Package } from "lucide-react"
+import { Users, AlertTriangle, Package, ShoppingCart } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -9,11 +9,13 @@ import {
   getInventoryQuantityonHand,
   getAnimalConditionSeverity
 } from "@/api/employeeDashboard"
+import { getOrders } from "@/api/order"
 
 export default function Dashboard() {
   const [pendingCount, setPendingCount] = useState(0)
   const [lowInventoryCount, setLowInventoryCount] = useState(0)
   const [highSeverityCount, setHighSeverityCount] = useState(0)
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
   const navigate = useNavigate()
   useEffect(() => {
     const fetchCounts = async () => {
@@ -21,16 +23,24 @@ export default function Dashboard() {
         const [
           pendingData,
           inventoryData,
-          severityData
+          severityData,
+          ordersData
         ] = await Promise.all([
           getFosterParentsPending(),
           getInventoryQuantityonHand(),
-          getAnimalConditionSeverity()
+          getAnimalConditionSeverity(),
+          getOrders()
         ])
-       
+
         setPendingCount(pendingData.status)
         setLowInventoryCount(inventoryData.quantityOnHand)
         setHighSeverityCount(severityData.animalSeverity)
+
+        // Count orders where orderComplete is false (pending)
+        const pending = ordersData.filter(
+          (order: { orderComplete: boolean | null }) => !order.orderComplete
+        )
+        setPendingOrdersCount(pending.length)
 
       } catch (error) {
         console.error("Error fetching dashboard counts:", error)
@@ -62,18 +72,25 @@ export default function Dashboard() {
       icon: AlertTriangle,
       manage: "/employee-pets-page",
     },
+    {
+      title: "Pending Orders",
+      count: pendingOrdersCount,
+      description: "Supply orders awaiting approval",
+      icon: ShoppingCart,
+      manage: "/employee-orders-page",
+    },
   ]
   return (
     <div className="min-h-screen bg-muted/40 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome User</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Employee Dashboard</h1>
 
           </div>
 
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {stats.map((item, index) => {
             const Icon = item.icon
             return (

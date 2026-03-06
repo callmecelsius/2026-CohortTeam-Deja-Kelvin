@@ -1,5 +1,5 @@
 import api from "./axios";
-import type { CreateOrderDto, CreateOrderItemDto } from "../../types/orderType";
+import type { CreateOrderDto, CreateOrderItemDto, UpdateOrderDto } from "../../types/orderType";
 
 //post
 export const createOrder = async (orderData: CreateOrderDto) => {
@@ -14,5 +14,17 @@ export const createOrderItem = async (itemData: CreateOrderItemDto) => {
 //get
 export const getOrders = async () => {
   const res = await api.get("/Order");
+  return res.data;
+};
+
+//put - update an order (used to mark complete)
+export const updateOrder = async (id: number, orderData: UpdateOrderDto) => {
+  const res = await api.put(`/Order/${id}`, orderData);
+  return res.data;
+};
+
+//delete
+export const deleteOrder = async (id: number) => {
+  const res = await api.delete(`/Order/${id}`);
   return res.data;
 };

@@ -105,10 +105,11 @@ export default function FosterStore() {
 
   // --- Filter products based on search text and selected category ---
   const filteredProducts = products.filter((product) => {
-    // Check if the product matches the search text
-    const matchesSearch = product.description
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
+    // Check if the product matches the search text (searches both name and category)
+    const search = searchText.toLowerCase();
+    const matchesSearch =
+      product.description.toLowerCase().includes(search) ||
+      product.name.toLowerCase().includes(search);
 
     // Check if the product matches the selected category
     const matchesCategory =
@@ -200,7 +201,7 @@ export default function FosterStore() {
       // Step 1: Create the order (backend returns the created order with its ID)
       const orderData = {
         userId: TEMP_USER_ID,
-        orderComplete: true,
+        orderComplete: false,
         dateOrdered: new Date().toISOString(),
       };
       const createdOrder = await createOrder(orderData);
