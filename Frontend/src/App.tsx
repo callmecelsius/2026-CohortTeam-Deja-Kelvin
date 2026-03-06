@@ -15,8 +15,7 @@ import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
 import PetDetailPage from './pages/employee/PetDetailPage';
 import FosterHomesPage from './pages/employee/FosterHomesPage';
-import FosterParentLoginPage from './pages/FosterParentLoginPage';
-import EmployeeLoginPage from './pages/EmployeeLoginPage';
+import EmployeeRegistrationPage from './pages/employee/EmployeeRegistrationPage';
 
 function Layout() {
   return (
@@ -41,15 +40,6 @@ const router = createBrowserRouter([
       {
         path: 'parent-registration',
         element: <ParentRegistration />,
-      },
-      //Login Pages
-      {
-        path: 'foster-login',
-        element: <FosterParentLoginPage />,
-      },
-      {
-        path: 'employee-login',
-        element: <EmployeeLoginPage />,
       },
     ],
   },
@@ -100,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: 'employee-foster-homes-page/',
         element: <FosterHomesPage/>
+      },
+      {
+        path: 'employee-registration-page',
+        element: <EmployeeRegistrationPage />,
       },
     ],
   },

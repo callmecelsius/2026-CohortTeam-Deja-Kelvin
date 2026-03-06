@@ -88,7 +88,7 @@ export default function NavBar() {
               >
                 <MenuItem>
                   <Link
-                    to="/employee-login"
+                    to="/employee-page"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Employee
@@ -96,7 +96,7 @@ export default function NavBar() {
                 </MenuItem>
                 <MenuItem>
                   <Link
-                    to="/foster-login"
+                    to="/foster-page"
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Foster Parents
