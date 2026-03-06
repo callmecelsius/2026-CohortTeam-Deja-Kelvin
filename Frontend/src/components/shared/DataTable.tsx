@@ -27,7 +27,7 @@ export function DataTable({
               {columns.map((col, i) => (
                 <TableHead
                   key={i}
-                  className="font-semibold text-gray-700 dark:text-gray-300"
+                  className="font-semibold text-gray-700 border-r border-gray-200"
                 >
                   {col.header}
                 </TableHead>

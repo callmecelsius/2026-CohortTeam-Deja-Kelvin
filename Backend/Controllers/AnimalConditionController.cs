@@ -35,6 +35,16 @@ namespace Backend.Controllers
       return Ok(conditions);
     }
 
+    [HttpGet("severity")]
+    public ActionResult GetAnimalSeverity()
+    {
+      var animalSeverity = _unitOfWork.AnimalConditionRepository.Get(filter: a =>
+            a.Severity != null &&
+            (a.Severity.ToLower() == "high" || a.Severity.ToLower() == "critical")).Count();
+
+      return Ok( new { animalSeverity });
+    }
+
     [HttpPost]
     public ActionResult Post([FromBody] AnimalConditionDto value)
     {

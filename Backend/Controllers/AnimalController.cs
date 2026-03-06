@@ -29,13 +29,33 @@ namespace Backend.Controllers
         public ActionResult Get(int id)
         {
             var animalTemp = _unitOfWork.AnimalRepository.GetByID(id);
-            if (animalTemp == null) 
+            if (animalTemp == null)
             {
                 return BadRequest();
             }
 
             return Ok(animalTemp);
         }
+
+        // GET api/Animal/FosterHome/1
+        [HttpGet("FosterHome/{fosterHomeId}")]
+        public IEnumerable<AnimalDto> GetFosterAnimals(int fosterHomeId)
+        {
+            var fosterAnimal = _unitOfWork.FosterAssignmentRepository.Get(f => f.FosterHomeId == fosterHomeId, includeProperties: "Animal");
+             var animals = fosterAnimal.Where(a => a.Animal != null).Select(a => a.Animal).Select(a => new AnimalDto {
+                Id = a.Id,
+                Name = a.Name,
+                Breed = a.Breed,
+                Weight = a.Weight,
+                Height = a.Height,
+                IntakeDate = a.IntakeDate,
+                Status = a.Status,                
+                Type = a.Type,
+                AnimalPhoto = a.AnimalPhoto
+            }).ToList();
+
+            return animals;
+        } 
 
         // POST api/<ValuesController>
         [HttpPost]

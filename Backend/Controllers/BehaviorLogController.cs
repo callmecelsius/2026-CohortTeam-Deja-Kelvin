@@ -15,6 +15,12 @@ namespace Backend.Controllers
       _unitOfWork = unitOfWork;
     }
 
+    [HttpGet]
+    public IEnumerable<BehaviorLog> Get()
+    {
+        var behaviorLogs = _unitOfWork.BehaviorLogRepository.Get();
+        return behaviorLogs;
+    }
 
     // GET
     [HttpGet("{id}")]
@@ -26,7 +32,16 @@ namespace Backend.Controllers
         return NotFound();
       }
 
-      return Ok(behaviorLog);
+      return Ok(new BehaviorLogDto()
+      {
+        Id = behaviorLog.Id,
+        AnimalId = behaviorLog.AnimalId,
+        ReportedByUserId = behaviorLog.ReportedByUserId,
+        BehaviorType = behaviorLog.BehaviorType,
+        Notes = behaviorLog.Notes,
+        DateReported = behaviorLog.DateReported,
+        Resolved = behaviorLog.Resolved
+      });
     }
 
     [HttpGet("animal/{animalId}")]
@@ -60,28 +75,61 @@ namespace Backend.Controllers
       };
       _unitOfWork.BehaviorLogRepository.Insert(newBehaviorLog);
       _unitOfWork.Save();
-      return CreatedAtAction(nameof(Get), new { id = newBehaviorLog.Id }, newBehaviorLog);
+      var newBehaviorLogDto = new BehaviorLogDto()
+      {
+        Id = newBehaviorLog.Id,
+        AnimalId = newBehaviorLog.AnimalId,
+        ReportedByUserId = newBehaviorLog.ReportedByUserId,
+        BehaviorType = newBehaviorLog.BehaviorType,
+        Notes = newBehaviorLog.Notes,
+        DateReported = newBehaviorLog.DateReported,
+        Resolved = newBehaviorLog.Resolved
+      };
+      return CreatedAtAction(nameof(Get), new { id = newBehaviorLog.Id }, newBehaviorLogDto);
     }
-    
+
     // PUT 
-    
+
     [HttpPut("{id}")]
-    public ActionResult Put(int id, [FromBody] BehaviorLogDto value)
+    public ActionResult Put(int id, [FromBody] BehaviorLogPutDto value)
     {
       var updateBehaviorLog = _unitOfWork.BehaviorLogRepository.GetByID(id);
       if (updateBehaviorLog == null)
       {
-        return BadRequest();
+        return NotFound();
       }
 
-      updateBehaviorLog.BehaviorType = value.BehaviorType;
-      updateBehaviorLog.Notes = value.Notes;
-      updateBehaviorLog.DateReported = value.DateReported;
       updateBehaviorLog.Resolved = value.Resolved;
 
       _unitOfWork.BehaviorLogRepository.Update(updateBehaviorLog);
       _unitOfWork.Save();
-      return Ok(updateBehaviorLog);
+      var updatedBehaviorLogDto = new BehaviorLogDto()
+      {
+        Id = updateBehaviorLog.Id,
+        AnimalId = updateBehaviorLog.AnimalId,
+        ReportedByUserId = updateBehaviorLog.ReportedByUserId,
+        BehaviorType = updateBehaviorLog.BehaviorType,
+        Notes = updateBehaviorLog.Notes,
+        DateReported = updateBehaviorLog.DateReported,
+        Resolved = updateBehaviorLog.Resolved
+      };
+      return Ok(updatedBehaviorLogDto);
+    }
+    
+    // DELETE
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(int id)
+    {
+      var behaviorLogDb = _unitOfWork.BehaviorLogRepository.GetByID(id);
+      if (behaviorLogDb == null)
+      {
+        return NotFound();
+      }
+
+      _unitOfWork.BehaviorLogRepository.Delete(id);
+      _unitOfWork.Save();
+      return Ok();
     }
   }
 }

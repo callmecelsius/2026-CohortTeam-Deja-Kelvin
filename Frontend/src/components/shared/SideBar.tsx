@@ -8,10 +8,13 @@ import {
     SidebarMenuButton,
     SidebarGroupContent,
     SidebarMenu,
+    SidebarHeader,
 } from "@/components/ui/sidebar"
 import type { LucideIcon } from "lucide-react";
 import { Home } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import logo from '../../assets/paws.png';
+
 export type NavItem = {
     name: string;
     href: string;
@@ -23,14 +26,20 @@ type AppSidebarProps = {
   navItems: NavItem[];
 };
 
-
-
-
 export function AppSidebar({label, navItems}: AppSidebarProps) {
     const location = useLocation();
 
   return (
     <Sidebar>
+      <SidebarHeader className="border-b border-indigo-200 dark:border-indigo-800/40 bg-linear-to-b from-gray-800 to-gray-900 px-4 py-4">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="Cuddle Buddies Logo" className="h-10 w-auto object-contain" />
+          <span className="text-base font-bold tracking-tight text-white">
+            Animal Shelter
+          </span>
+        </Link>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>{label}</SidebarGroupLabel>

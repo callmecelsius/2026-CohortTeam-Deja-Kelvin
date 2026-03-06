@@ -1,4 +1,4 @@
-﻿
+
 using Backend.Data;
 using Backend.Data.Models;
 using Backend.Dtos;
@@ -101,7 +101,11 @@ namespace Backend.Controllers
                 _unitOfWork.UserRepository.Insert(user);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
-                return Ok("user registered successfully.");
+                return Ok(new
+                {
+                    id = user.Id,
+                    message = "user registered successfully.",
+                });
 
             }            
             catch (Exception)
@@ -109,6 +113,30 @@ namespace Backend.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." });
             }
 
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Put(int id, [FromBody] UsersDto userDto)
+        {
+            var user = _unitOfWork.UserRepository.GetByID(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
+            user.PhoneNumber = userDto.Phone;
+            user.Email = userDto.Email;
+            user.Address = userDto.Address;
+            user.City = userDto.City;
+            user.State = userDto.State;
+            user.Zip = userDto.Zip;
+            user.UpdatedOn = DateTime.UtcNow;
+
+            _unitOfWork.UserRepository.Update(user);
+            _unitOfWork.Save();
+            return Ok();
         }
     }
 }
