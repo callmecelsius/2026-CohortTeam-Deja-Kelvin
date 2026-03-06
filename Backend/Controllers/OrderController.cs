@@ -39,12 +39,13 @@ namespace Backend.Controllers
          */
         public IEnumerable<OrderDto> Get()
         {
-            var orders = _unitOfWork.OrderRepository.Get(includeProperties: "OrderItems,User,OrderItems.Product");
+            var orders = _unitOfWork.OrderRepository.Get(includeProperties: "OrderItems,User,OrderItems.Product,OrderItems.Product.Category");
 
             return orders.Select(o => new OrderDto
             {
                 Id = o.Id,
                 UserId = o.UserId,
+                UserName = o.User != null ? $"{o.User.FirstName} {o.User.LastName}" : null,
                 OrderComplete = o.OrderComplete,
                 DateOrdered = o.DateOrdered,
                 OrderItems = o.OrderItems.Select(oi => new OrderItemDto
@@ -53,7 +54,8 @@ namespace Backend.Controllers
                     OrderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
-                    ProductName = oi.Product?.Description
+                    ProductName = oi.Product?.Description,
+                    CategoryName = oi.Product?.Category?.Name
                 }).ToList()
             }).ToList();
         }
@@ -62,7 +64,7 @@ namespace Backend.Controllers
         public ActionResult<OrderDto> Get(int id)
         {
             var order = _unitOfWork.OrderRepository
-                .Get(o => o.Id == id, includeProperties: "OrderItems,User,OrderItems.Product")
+                .Get(o => o.Id == id, includeProperties: "OrderItems,User,OrderItems.Product,OrderItems.Product.Category")
                 .FirstOrDefault();
 
             if (order == null)
@@ -74,6 +76,7 @@ namespace Backend.Controllers
             {
                 Id = order.Id,
                 UserId = order.UserId,
+                UserName = order.User != null ? $"{order.User.FirstName} {order.User.LastName}" : null,
                 OrderComplete = order.OrderComplete,
                 DateOrdered = order.DateOrdered,
                 OrderItems = order.OrderItems.Select(oi => new OrderItemDto
@@ -82,7 +85,8 @@ namespace Backend.Controllers
                     OrderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
-                    ProductName = oi.Product?.Description
+                    ProductName = oi.Product?.Description,
+                    CategoryName = oi.Product?.Category?.Name
                 }).ToList()
             };
 
@@ -117,8 +121,9 @@ namespace Backend.Controllers
 
                 _unitOfWork.OrderRepository.Insert(order);
                 _unitOfWork.Save();
-                _unitOfWork.Dispose();
-                return Ok("order inserted successfully.");
+
+                // Return the created order with its ID so the frontend can use it
+                return Ok(new { id = order.Id });
 
             }
             catch (Exception)
@@ -146,10 +151,35 @@ namespace Backend.Controllers
                     return BadRequest();
                 }
 
+                // Check if the order is being marked as complete (was false, now true)
+                bool isBeingCompleted = orderDb.OrderComplete != true && orderDto.OrderComplete == true;
+
                 orderDb.UserId = orderDto.UserId;
                 orderDb.OrderComplete = orderDto.OrderComplete;
                 orderDb.DateOrdered = orderDto.DateOrdered;
                 _unitOfWork.OrderRepository.Update(orderDb);
+
+                // If the order is being completed, decrease inventory for each item
+                if (isBeingCompleted)
+                {
+                    var orderItems = _unitOfWork.OrderItemRepository
+                        .Get(oi => oi.OrderId == id);
+
+                    foreach (var item in orderItems)
+                    {
+                        var inventoryItem = _unitOfWork.InventoryRepository
+                            .Get(i => i.ProductId == item.ProductId)
+                            .FirstOrDefault();
+
+                        if (inventoryItem != null && item.Quantity.HasValue)
+                        {
+                            inventoryItem.QuantityOnHand = (inventoryItem.QuantityOnHand ?? 0) - item.Quantity.Value;
+                            inventoryItem.LastUpdated = DateTime.UtcNow;
+                            _unitOfWork.InventoryRepository.Update(inventoryItem);
+                        }
+                    }
+                }
+
                 _unitOfWork.Save();
                 return Ok();
             }
@@ -165,6 +195,16 @@ namespace Backend.Controllers
         {
             try
             {
+                // Delete all order items first (foreign key constraint)
+                var orderItems = _unitOfWork.OrderItemRepository
+                    .Get(oi => oi.OrderId == id);
+
+                foreach (var item in orderItems)
+                {
+                    _unitOfWork.OrderItemRepository.Delete(item.Id);
+                }
+
+                // Now delete the order itself
                 _unitOfWork.OrderRepository.Delete(id);
                 _unitOfWork.Save();
                 return Ok();
