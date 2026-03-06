@@ -1,20 +1,60 @@
-import { createHome, getFosterHomes } from '@/api/fosterhome';
+import {
+  createHome,
+  deleteFosterHome,
+  getFosterHomes,
+  updateHome,
+} from '@/api/fosterhome';
 import { DataTable } from '@/components/shared/DataTable';
 import { Button } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import type { FosterHome } from 'types/FosterHomeType';
 import { FosterHomesModal } from './FosterHomesModal';
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 
-const columns = [
-  { header: 'Home Name', accessor: 'homeName' },
-  { header: 'Address', accessor: 'address' },
-  { header: 'Capacity', accessor: 'capacity' },
-];
+import { ActionsDropdown } from '@/components/shared/ActionsDropdown';
+import { toast } from 'sonner';
 
 export function FosterHomesTable() {
   const [fosterHome, setFosterHome] = useState<FosterHome[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingInventory, setEditingHome] = useState<FosterHome | null>(null);
+  const [editingHome, setEditingHome] = useState<FosterHome | null>(null);
+  const columns = [
+    {
+      header: 'Actions',
+      cell: (item: FosterHome) => (
+        <ActionsDropdown
+          actions={[
+            {
+              label: 'Edit',
+              icon: <Pencil className="mr-2 h-4 w-4" />,
+              onClick: () => handleEdit(item),
+            },
+            {
+              label: 'Delete',
+              icon: <Trash2 className="mr-2 h-4 w-4" />,
+              onClick: () => handleDelete(item.id),
+              className: 'text-red-600',
+            },
+          ]}
+        />
+      ),
+    },
+    { header: 'Home Name', accessor: 'homeName' },
+    { header: 'Address', accessor: 'address' },
+    { header: 'Capacity', accessor: 'capacity' },
+  ];
+
+  const handleEdit = (item: FosterHome) => {
+    setEditingHome(item);
+    setIsModalOpen(true);
+  };
+
+  //deletes inventory from database
+  const handleDelete = async (id: number) => {
+    await deleteFosterHome(id);
+    toast.success('Deleted successfully');
+    await loadHomes();
+  };
 
   const loadHomes = async () => {
     const parentsHomes = await getFosterHomes();
@@ -40,14 +80,22 @@ export function FosterHomesTable() {
     Capacity: number;
   }) => {
     try {
-      await createHome({
-        homeName: formData.homeName,
-        Address: formData.Address,
-        Capacity: formData.Capacity,
-      });
-
-      alert('Inserted successfully');
-
+      //TODO
+      if (editingHome) {
+        await updateHome(editingHome.id, {
+          homeName: formData.homeName,
+          Address: formData.Address,
+          Capacity: formData.Capacity,
+        });
+        alert('Edited successfully');
+      } else {
+        await createHome({
+          homeName: formData.homeName,
+          Address: formData.Address,
+          Capacity: formData.Capacity,
+        });
+        alert('Inserted successfully');
+      }
       // Refresh table after submission
       await loadHomes();
       setIsModalOpen(false);
@@ -67,17 +115,31 @@ export function FosterHomesTable() {
           + Add Home
         </Button>
       </div>
+
       <DataTable columns={columns} data={fosterHome} />
       <FosterHomesModal
-        key={editingInventory?.id ?? 'new'}
+        key={editingHome?.id ?? 'new'}
         open={isModalOpen}
         onOpenChange={(open) => {
           setIsModalOpen(open);
           if (!open) setEditingHome(null);
         }}
         onSubmit={handleSubmit}
-        isEditing={editingInventory ? true : false}
+        initialData={
+          editingHome
+            ? {
+                id: editingHome.id,
+                homeName: editingHome.homeName ?? '',
+                Address: editingHome.Address ?? '',
+                Capacity: editingHome.Capacity ?? 0,
+              }
+            : undefined
+        }
+        isEditing={editingHome ? true : false}
       />
     </div>
   );
 }
+// homeName: formData.homeName,
+// Address: formData.Address,
+// Capacity: formData.Capacity,

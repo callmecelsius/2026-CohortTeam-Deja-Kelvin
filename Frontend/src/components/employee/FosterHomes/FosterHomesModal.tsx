@@ -37,6 +37,7 @@ export function FosterHomesModal({
   initialData,
   isEditing = false,
 }: HomeModalProps) {
+  console.log(initialData);
   const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
@@ -119,9 +120,9 @@ export function FosterHomesModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="home-Address">Address</Label>
+            <Label htmlFor="home-address">Address</Label>
             <Input
-              id="home-Address"
+              id="home-address"
               value={form.Address}
               onChange={(e) => setForm({ ...form, Address: e.target.value })}
               placeholder="e.g., 1234 Lane Street"
@@ -129,9 +130,9 @@ export function FosterHomesModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="home-Capacity">Capacity</Label>
+            <Label htmlFor="home-capacity">Capacity</Label>
             <Input
-              id="home-Capacity"
+              id="home-capacity"
               type="number"
               step="1"
               value={form.Capacity}
