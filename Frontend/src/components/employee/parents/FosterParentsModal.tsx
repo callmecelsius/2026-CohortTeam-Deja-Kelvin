@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { toast } from "sonner"
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   Dialog,
@@ -8,67 +8,72 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type FosterFormData = {
-  firstName: string
-  lastName: string
-  phone: string
-  email: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  status: string
-}
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  status: string;
+};
 
-type EditFosterData = FosterFormData & { id: number }
+type EditFosterData = FosterFormData & { id: number };
 
 type FosterParentsModalProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSubmit: (formData: FosterFormData) => Promise<void>
-  initialData: EditFosterData
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (formData: FosterFormData) => Promise<void>;
+  initialData: EditFosterData;
+};
 
-export function FosterParentsModal({ open, onOpenChange, onSubmit, initialData }: FosterParentsModalProps) {
+export function FosterParentsModal({
+  open,
+  onOpenChange,
+  onSubmit,
+  initialData,
+}: FosterParentsModalProps) {
   const [form, setForm] = useState<FosterFormData>({
-    firstName: initialData.firstName ?? "",
-    lastName: initialData.lastName ?? "",
-    phone: initialData.phone ?? "",
-    email: initialData.email ?? "",
-    address: initialData.address ?? "",
-    city: initialData.city ?? "",
-    state: initialData.state ?? "",
-    zip: initialData.zip ?? "",
-    status: initialData.status ?? "",
-  })
+    firstName: initialData.firstName ?? '',
+    lastName: initialData.lastName ?? '',
+    phone: initialData.phone ?? '',
+    email: initialData.email ?? '',
+    address: initialData.address ?? '',
+    city: initialData.city ?? '',
+    state: initialData.state ?? '',
+    zip: initialData.zip ?? '',
+    status: initialData.status ?? '',
+  });
 
   async function handleSubmit() {
     try {
-      await onSubmit(form)
+      await onSubmit(form);
 
-      toast.success("Foster parent updated successfully!")
+      toast.success('Foster parent updated successfully!');
 
       setForm({
-        firstName: "",
-        lastName: "",
-        phone: "",
-        email: "",
-        address: "",
-        city: "",
-        state: "",
-        zip: "",
-        status: "",
-      })
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        address: '',
+        city: '',
+        state: '',
+        zip: '',
+        status: '',
+      });
 
-      onOpenChange(false)
+      onOpenChange(false);
     } catch {
-      toast.error("Something went wrong. Please try again.")
+      toast.error('Something went wrong. Please try again.');
     }
   }
 
@@ -179,5 +184,5 @@ export function FosterParentsModal({ open, onOpenChange, onSubmit, initialData }
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
