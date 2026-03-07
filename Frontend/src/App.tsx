@@ -13,18 +13,13 @@ import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
 import PetDetailPage from './pages/employee/PetDetailPage';
 import FosterHomesPage from './pages/employee/FosterHomesPage';
-import FosterParentLoginPage from './pages/FosterParentLoginPage';
-import EmployeeLoginPage from './pages/EmployeeLoginPage';
-import { useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+
 import { getUserByEmail } from './api/user';
 import useGlobalContext from './hooks/useGlobalContext';
 import AuthLayout from './Layouts/AuthLayout';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
-);
+import { TempLogin } from './components/shared/TempLogin';
+import { supabaseClient } from './lib/supabaseclient';
 
 function BasicLayout() {
   return (
@@ -38,35 +33,36 @@ function BasicLayout() {
 
 export default function App() {
   const { setUser } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      supabase.auth.getClaims().then(async ({ data }) => {
+    supabaseClient.auth.onAuthStateChange(() => {
+      supabaseClient.auth.getClaims().then(async ({ data }) => {
         console.log('Data from getClaims:', data);
         if (data) {
           console.log('Auth state changed, updated claims:', data.claims.email);
           const userData = await getUserByEmail(
             data.claims.email as unknown as string
           );
-          console.log('User data:', userData);
           setUser(userData);
         }
+        setLoading(false);
       });
-
-      console.log('Auth state changed', subscription);
     });
   }, [setUser]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Routes>
-      <Route element={<AuthLayout />}>
+      <Route element={<AuthLayout usersRole="foster-parent" />}>
         <Route path="/foster-page" element={<FosterDashboard />} />
         <Route path="/foster-pets-page" element={<FosterPets />} />
         <Route path="/foster-store-page" element={<FosterStore />} />
       </Route>
-      <Route element={<AuthLayout />}>
+      <Route element={<AuthLayout usersRole="employee" />}>
         <Route path="/employee-page" element={<EmployeeDashboard />} />
         <Route
           path="/employee-foster-parents-page"
@@ -86,8 +82,7 @@ export default function App() {
       <Route element={<BasicLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/parent-registration" element={<ParentRegistration />} />
-        <Route path="/foster-login" element={<FosterParentLoginPage />} />
-        <Route path="/employee-login" element={<EmployeeLoginPage />} />
+        <Route path="/login" element={<TempLogin />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>

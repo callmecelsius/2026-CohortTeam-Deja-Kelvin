@@ -1,4 +1,4 @@
-import { CardDemo } from '@/components/shared/loginCard';
+import { CardDemo } from '@/components/shared/TempLogin';
 
 export default function EmployeeLoginPage() {
   return (

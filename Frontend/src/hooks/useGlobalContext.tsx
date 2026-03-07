@@ -3,7 +3,7 @@ import type { User } from '../../types/UserType';
 
 type GlobalContextType = {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setUser: (user: User | null) => void;
 };
 
 const GlobalContextObject: GlobalContextType = {

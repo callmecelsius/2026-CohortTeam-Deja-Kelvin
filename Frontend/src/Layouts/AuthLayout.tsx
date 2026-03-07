@@ -14,7 +14,7 @@ import {
   Users,
 } from 'lucide-react';
 import { UserAvatar } from '@/components/shared/UserAvatar';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import useGlobalContext from '@/hooks/useGlobalContext';
 
 const fosterNavItems: NavItem[] = [
@@ -35,24 +35,23 @@ const employeeNavItems: NavItem[] = [
   { name: 'Pets', href: '/employee-pets-page', icon: PawPrint },
 ];
 
-export default function AuthLayout() {
+export default function AuthLayout({ usersRole }: { usersRole: string }) {
   const { user } = useGlobalContext();
-  let navItem = fosterNavItems;
-  let label = 'Foster';
+  console.log('user?.roles?', user?.roles);
 
-  if (user?.employeeId !== null && user?.fosterParent === null) {
-    navItem = employeeNavItems;
-    label = 'Employee';
+  if (user === null || user.email === '' || user.id === null)
+    return <Navigate to="/" replace />;
+  if (!user?.roles?.includes('employee') && usersRole === 'employee') {
+    return <Navigate to="/foster-page" replace />;
   }
-
-  if (user?.employeeId !== null && user?.fosterParent !== null) {
-    const tempFoster = [
-      { name: 'My Pets', href: '/foster-pets-page', icon: PawPrint },
-      { name: 'Store', href: '/foster-store-page', icon: ShoppingBag },
-    ];
-    navItem = [...tempFoster, ...employeeNavItems];
-    label = 'Employee';
-  }
+  const navItem =
+    user?.roles?.includes('employee') && usersRole === 'employee'
+      ? employeeNavItems
+      : fosterNavItems;
+  const label =
+    user?.roles?.includes('employee') && usersRole === 'employee'
+      ? 'Employee'
+      : 'Foster';
 
   return (
     <SidebarProvider>

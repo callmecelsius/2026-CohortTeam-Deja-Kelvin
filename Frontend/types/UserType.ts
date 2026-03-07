@@ -14,4 +14,5 @@ export interface User {
   createdOn?: string;
   updatedOn?: string;
   fosterParent?: FosterParent;
+  roles?: string[];
 }

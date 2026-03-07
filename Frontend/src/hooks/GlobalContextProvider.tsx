@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { UserContext } from './useGlobalContext';
 import type { User } from '../../types/UserType';
 
@@ -14,7 +14,26 @@ export default function GlobalContext({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
+
+  const setUser = useCallback((user: User | null) => {
+    if (user === null) {
+      setUserState(null);
+      return;
+    }
+
+    if (user?.employeeId !== null) {
+      user.roles = ['employee'];
+    }
+
+    if (user?.fosterParent !== null) {
+      user.roles = user.roles
+        ? [...user.roles, 'foster-parent']
+        : ['foster-parent'];
+    }
+
+    setUserState(user);
+  }, []);
 
   return (
     <UserContext.Provider

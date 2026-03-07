@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { getUserByEmail } from '@/api/user';
 import useGlobalContext from '@/hooks/useGlobalContext';
+import { supabaseClient } from '@/lib/supabaseclient';
+import { useNavigate } from 'react-router-dom';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
-);
-
-export function CardDemo() {
+export function TempLogin() {
   const { setUser } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -22,6 +18,7 @@ export function CardDemo() {
   const [verifying, setVerifying] = useState(!!hasTokenHash);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSuccess, setAuthSuccess] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if we have token_hash in URL (magic link callback)
@@ -31,7 +28,7 @@ export function CardDemo() {
 
     if (token_hash) {
       // Verify the OTP token
-      supabase.auth
+      supabaseClient.auth
         .verifyOtp({
           token_hash,
           type: 'email',
@@ -49,7 +46,7 @@ export function CardDemo() {
     }
 
     // Check for existing session using getClaims
-    supabase.auth.getClaims().then(({ data }) => {
+    supabaseClient.auth.getClaims().then(({ data }) => {
       if (data) {
         console.log('Existing session found:', data.claims);
         setClaims(data.claims);
@@ -59,8 +56,8 @@ export function CardDemo() {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      supabase.auth.getClaims().then(({ data }) => {
+    } = supabaseClient.auth.onAuthStateChange(() => {
+      supabaseClient.auth.getClaims().then(({ data }) => {
         if (data) {
           console.log('Auth state changed, updated claims:', data.claims);
           setClaims(data.claims);
@@ -75,25 +72,26 @@ export function CardDemo() {
     event.preventDefault();
     setLoading(true);
 
-    const login = await supabase.auth.signInWithPassword({
+    const login = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-    if (login.error) {
-      alert(login.error.message);
-    } else {
-      alert('Login successful!');
-    }
-
     const data = await getUserByEmail(email);
     console.log('User data:', data);
     setUser(data);
+
+    if (login.error) {
+      alert(login.error.message);
+    } else {
+      navigate('/employee-page');
+    }
+
     setLoading(false);
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     setClaims(null);
     setUser(null);
   };
