@@ -16,8 +16,8 @@ import { Label } from '@/components/ui/label';
 
 type HomeFormData = {
   homeName: string;
-  Address: string;
-  Capacity: number;
+  address: string;
+  capacity: number;
 };
 
 type EditHomeData = HomeFormData & { id: number };
@@ -43,8 +43,8 @@ export function FosterHomesModal({
   const [form, setForm] = useState({
     //TODO
     homeName: initialData?.homeName ?? '',
-    Address: initialData?.Address ?? '',
-    Capacity: initialData?.Capacity ?? '',
+    address: initialData?.address ?? '',
+    capacity: initialData?.capacity ?? '',
   });
 
   // Update form when initialData changes
@@ -53,15 +53,15 @@ export function FosterHomesModal({
       setForm({
         //TODO
         homeName: initialData?.homeName ?? '',
-        Address: initialData?.Address ?? '',
-        Capacity: initialData?.Capacity ?? '',
+        address: initialData?.address ?? '',
+        capacity: initialData?.capacity ?? '',
       });
     } else {
       //TODO
       setForm({
         homeName: '',
-        Address: '',
-        Capacity: '',
+        address: '',
+        capacity: '',
       });
     }
   }, [initialData]);
@@ -72,16 +72,16 @@ export function FosterHomesModal({
       //TODO
       await onSubmit({
         homeName: form.homeName,
-        Address: form.Address,
-        Capacity: Number(form.Capacity),
+        address: form.address,
+        capacity: Number(form.capacity),
       });
 
       // Reset form data
       //TODO
       setForm({
         homeName: '',
-        Address: '',
-        Capacity: '',
+        address: '',
+        capacity: '',
       });
 
       // Close modal
@@ -123,8 +123,8 @@ export function FosterHomesModal({
             <Label htmlFor="home-address">Address</Label>
             <Input
               id="home-address"
-              value={form.Address}
-              onChange={(e) => setForm({ ...form, Address: e.target.value })}
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
               placeholder="e.g., 1234 Lane Street"
             />
           </div>
@@ -135,8 +135,8 @@ export function FosterHomesModal({
               id="home-capacity"
               type="number"
               step="1"
-              value={form.Capacity}
-              onChange={(e) => setForm({ ...form, Capacity: e.target.value })}
+              value={form.capacity}
+              onChange={(e) => setForm({ ...form, capacity: e.target.value })}
               placeholder="e.g., 29.99"
             />
           </div>

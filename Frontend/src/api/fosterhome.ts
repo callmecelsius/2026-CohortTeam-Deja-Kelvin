@@ -16,10 +16,8 @@ export const createHome = async (homeData: {
   return res.data;
 };
 
-import axios from 'axios';
-
 export const deleteFosterHome = (id: number) => {
-  return axios.delete(`/api/fosterhomes/${id}`);
+  return api.delete(`/FosterHome/${id}`);
 };
 
 export const updateHome = async (id: number, home: FosterHomeDto) => {

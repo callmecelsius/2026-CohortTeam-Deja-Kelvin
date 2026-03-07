@@ -84,15 +84,15 @@ export function FosterHomesTable() {
       if (editingHome) {
         await updateHome(editingHome.id, {
           homeName: formData.homeName,
-          Address: formData.Address,
-          Capacity: formData.Capacity,
+          address: formData.address,
+          capacity: formData.capacity,
         });
         alert('Edited successfully');
       } else {
         await createHome({
           homeName: formData.homeName,
-          Address: formData.Address,
-          Capacity: formData.Capacity,
+          address: formData.address,
+          capacity: formData.capacity,
         });
         alert('Inserted successfully');
       }
@@ -130,8 +130,8 @@ export function FosterHomesTable() {
             ? {
                 id: editingHome.id,
                 homeName: editingHome.homeName ?? '',
-                Address: editingHome.Address ?? '',
-                Capacity: editingHome.Capacity ?? 0,
+                address: editingHome.address ?? '',
+                capacity: editingHome.capacity ?? 0,
               }
             : undefined
         }
