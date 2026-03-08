@@ -103,18 +103,6 @@ namespace Backend.Controllers
             return Ok(userTemp);
         }
 
-        //http://localhost:5282/api/User/email
-        [HttpGet("email/{email}")]
-        public ActionResult GetByEmail(string email)
-        {
-            var userTemp = _unitOfWork.UserRepository.Get(filter: u => u.Email == email);
-            if (userTemp == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(userTemp);
-        }
 
         [HttpPost]
         //http://localhost:5282/api/User
