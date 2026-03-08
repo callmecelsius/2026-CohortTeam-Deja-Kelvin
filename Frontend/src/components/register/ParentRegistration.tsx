@@ -1,416 +1,417 @@
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast, Toaster } from "sonner"
-import US_STATES from "@/constants/states";
-import { useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast, Toaster } from 'sonner';
+import US_STATES from '@/constants/states';
+import { useEffect, useState } from 'react';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormDescription,
-    FormMessage,
-} from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { registerParent, getFosterHomes, type FosterHome } from "@/api/userregistration";;
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormDescription,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  registerParent,
+  getFosterHomes,
+  type FosterHome,
+} from '@/api/userregistration';
+import { supabaseClient } from '@/lib/supabaseclient';
+import { getUserByEmail } from '@/api/user';
+import useGlobalContext from '@/hooks/useGlobalContext';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z
-    .object({
-        username: z
-            .string()
-            .min(8, "At least 8 characters")
-            .max(30, "Max 30 characters")
-            .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                "Must have uppercase, lowercase, number & special char"
-            ),
-        firstname: z.string().min(1, "First name is required"),
-        lastname: z.string().min(1, "Last name is required"),
-        phone: z
-            .string()
-            .regex(/^[0-9]{10}$/, "Phone number must be 10 digits"),
-        email: z.string().email("Enter a valid email"),
-        address: z
-            .string()
-            .min(5, "At least 5 characters"),
-        city: z
-            .string()
-            .regex(/^[A-Za-z\s]+$/, "Letters only"),
-        state: z
-            .string()
-            .min(1, "Please select a state"),
-        zip: z
-            .string()
-            .regex(/^[0-9]{5,6}$/, "5-6 digits only"),
-        fosterHomeId: z.string(),
-        // password: z
-        //     .string()
-        //     .min(8, "At least 8 characters")
-        //     .regex(
-        //         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
-        //         "Must contain uppercase, lowercase, number & special char"
-        //     ),
-        // confirmPassword: z.string(),
-    })
-    // .refine((data) => data.password === data.confirmPassword, {
-    //     message: "Passwords do not match",
-    //     path: ["confirmPassword"],
-    // })
-    ;
-
+  .object({
+    username: z
+      .string()
+      .min(8, 'At least 8 characters')
+      .max(30, 'Max 30 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        'Must have uppercase, lowercase, number & special char'
+      ),
+    firstname: z.string().min(1, 'First name is required'),
+    lastname: z.string().min(1, 'Last name is required'),
+    phone: z.string().regex(/^[0-9]{10}$/, 'Phone number must be 10 digits'),
+    email: z.string().email('Enter a valid email'),
+    address: z.string().min(5, 'At least 5 characters'),
+    city: z.string().regex(/^[A-Za-z\s]+$/, 'Letters only'),
+    state: z.string().min(1, 'Please select a state'),
+    zip: z.string().regex(/^[0-9]{5,6}$/, '5-6 digits only'),
+    fosterHomeId: z.string(),
+    password: z
+      .string()
+      .min(8, 'At least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
+        'Must contain uppercase, lowercase, number & special char'
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 type FormValues = z.infer<typeof formSchema>;
 
-
 const ParentRegistration = () => {
-    const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            username: "",
-            firstname: "",
-            lastname: "",
-            phone: "",
-            email: "",
-            address: "",
-            city: "",
-            state: "",
-            zip: "",
-            fosterHomeId: "",
-            //password: "",
-            //confirmPassword: "",
-        },
-    });
+  const { setUser } = useGlobalContext();
+  const navigate = useNavigate();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+      firstname: '',
+      lastname: '',
+      phone: '',
+      email: '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
+      fosterHomeId: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-    const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
+    try {
+      console.log('Form data:', data);
 
-        try {
-            console.log("Form data:", data);
+      const registrationData = {
+        ...data,
+      };
 
-            const registrationData = {
-                ...data,
-            };
+      console.log('Sending to backend:', registrationData);
 
-            console.log("Sending to backend:", registrationData);
+      const result = await registerParent(registrationData);
+      console.log('result', result);
+      if (result == false) {
+        toast.success('Selected foster home is full!');
+      } else {
+        form.reset();
+        toast.success('Registration successful!');
 
-            const result = await registerParent(registrationData);
-            console.log('result', result);
-            if (result == false) {
-                toast.success("Selected foster home is full!");
-            }
-            else {
-                form.reset();
-                toast.success("Registration successful!");
-            }
+        const supabaseResponse = await supabaseClient.auth.signUp({
+          email: data.email,
+          password: data.password,
+        });
 
-
-        } catch (err: any) {
-            console.error("Registration error:", err);
-            toast.error("Registration failed!");
+        if (supabaseResponse.data.user) {
+          const userDataResponse = await getUserByEmail(data.email);
+          console.log('User data after registration:', userDataResponse);
+          if (userDataResponse) {
+            setUser(userDataResponse);
+            navigate('/foster-page');
+          }
         }
+
+        console.log('Supabase signUp result:', supabaseResponse);
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      toast.error('Registration failed!');
+    }
+  };
+
+  const [fosterhomes, setFosterhomes] = useState<FosterHome[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const loadFosterHomes = async () => {
+      try {
+        setLoading(true);
+        const home = await getFosterHomes();
+        console.log('UI', home);
+        setFosterhomes(home);
+      } catch (error) {
+        console.error('Error fetching foster homes:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
+    loadFosterHomes();
+  }, []);
 
-    const [fosterhomes, setFosterhomes] = useState<FosterHome[]>([]);
-    const [loading, setLoading] = useState(false);
-    useEffect(() => {
-        const loadFosterHomes = async () => {
-            try {
-                setLoading(true);
-                const home = await getFosterHomes();
-                console.log('UI', home)
-                setFosterhomes(home);
-            } catch (error) {
-                console.error("Error fetching foster homes:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-100 to-rose-200 p-4">
+      <Toaster richColors position="top-center" />
+      <Card className="w-full max-w-2xl shadow-2xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl">Parent Registration</CardTitle>
+          <CardDescription>Create your account to get started</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Username */}
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="username">Username</Label>
+                    <FormControl>
+                      <Input
+                        id="username"
+                        placeholder="Enter username"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      8-30 characters. Must include uppercase, lowercase, number
+                      & special character.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        loadFosterHomes();
-    }, []);
+              {/* First Name & Last Name */}
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="firstname">First Name</Label>
+                      <FormControl>
+                        <Input id="firstname" placeholder="John" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="lastname">Last Name</Label>
+                      <FormControl>
+                        <Input id="lastname" placeholder="Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-100 to-rose-200 p-4">
-            <Toaster richColors position="top-center" />
-            <Card className="w-full max-w-2xl shadow-2xl">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-3xl">Parent Registration</CardTitle>
-                    <CardDescription>Create your account to get started</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            {/* Username */}
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <Label htmlFor="username">Username</Label>
-                                        <FormControl>
-                                            <Input
-                                                id="username"
-                                                placeholder="Enter username"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormDescription>
-                                            8-30 characters. Must include uppercase, lowercase, number & special character.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+              {/* Phone & Email */}
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <FormControl>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="1234567890"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="email">Email</Label>
+                      <FormControl>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="john@example.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                            {/* First Name & Last Name */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="firstname"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="firstname">First Name</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="firstname"
-                                                    placeholder="John"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="lastname"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="lastname">Last Name</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="lastname"
-                                                    placeholder="Doe"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+              {/* Address */}
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="address">Address</Label>
+                    <FormControl>
+                      <Input
+                        id="address"
+                        placeholder="123 Main Street"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                            {/* Phone & Email */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="phone">Phone Number</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="phone"
-                                                    type="tel"
-                                                    placeholder="1234567890"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="email">Email</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="email"
-                                                    type="email"
-                                                    placeholder="john@example.com"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+              {/* City, State & Zip */}
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="city">City</Label>
+                      <FormControl>
+                        <Input id="city" placeholder="New York" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="state">State</Label>
+                      <FormControl>
+                        <select
+                          id="state"
+                          {...field}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select a state</option>
+                          {US_STATES.map((state) => (
+                            <option key={state.code} value={state.code}>
+                              {state.name}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="zip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="zip">Zip Code</Label>
+                      <FormControl>
+                        <Input id="zip" placeholder="10001" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Foster Home */}
+              <FormField
+                control={form.control}
+                name="fosterHomeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="fosterHomeId">Foster Home</Label>
+                    <FormControl>
+                      <select
+                        {...field}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                        disabled={loading}
+                      >
+                        <option value="">Select a Foster Home</option>
+                        {fosterhomes.length > 0 ? (
+                          fosterhomes.map((fh) => (
+                            <option key={fh.id} value={fh.id}>
+                              {fh.homeName}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">No foster homes available</option>
+                        )}
+                      </select>
+                    </FormControl>
 
-                            {/* Address */}
-                            <FormField
-                                control={form.control}
-                                name="address"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <Label htmlFor="address">Address</Label>
-                                        <FormControl>
-                                            <Input
-                                                id="address"
-                                                placeholder="123 Main Street"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                            {/* City, State & Zip */}
-                            <div className="grid grid-cols-3 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="city"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="city">City</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="city"
-                                                    placeholder="New York"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="state"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="state">State</Label>
-                                            <FormControl>
-                                                <select
-                                                    id="state"
-                                                    {...field}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                                                >
-                                                    <option value="">Select a state</option>
-                                                    {US_STATES.map((state: any) => (
-                                                        <option key={state.code} value={state.code}>
-                                                            {state.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </FormControl>
+              {/* Password & Confirm Password */}
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="password">Password</Label>
+                      <FormControl>
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                      </FormControl>
 
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="zip"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="zip">Zip Code</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="zip"
-                                                    placeholder="10001"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            {/* Foster Home */}
-                            <FormField
-                                control={form.control}
-                                name="fosterHomeId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <Label htmlFor="fosterHomeId">Foster Home</Label>
-                                        <FormControl>
-                                            <select
-                                                {...field}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                                                disabled={loading}
-                                            >
-                                                <option value="">Select a Foster Home</option>
-                                                {fosterhomes.length > 0 ? (
-                                                    fosterhomes.map((fh) => (
-                                                        <option key={fh.id} value={fh.id}>
-                                                            {fh.homeName}
-                                                        </option>
-                                                    ))
-                                                ) : (
-                                                    <option value="">No foster homes available</option>
-                                                )}
-                                            </select>
-                                        </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <FormControl>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
+                      </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormDescription>
+                Min 8 characters with uppercase, lowercase, number & special
+                character.
+              </FormDescription>
 
-
-                            {/* Password & Confirm Password */}
-                            {/* <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="password">Password</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="password"
-                                                    type="password"
-                                                    placeholder="••••••••"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="confirmPassword"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                            <FormControl>
-                                                <Input
-                                                    id="confirmPassword"
-                                                    type="password"
-                                                    placeholder="••••••••"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                            </div>
-                            <FormDescription>
-                                Min 8 characters with uppercase, lowercase, number & special character.
-                            </FormDescription>
-                            */}
-                            {/* Submit Button */}
-                            <Button type="submit" variant="outline" className="w-full font-semibold py-3 text-lg rounded-lg transition-all duration-200" >
-                                Register
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
-    );
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="outline"
+                className="w-full font-semibold py-3 text-lg rounded-lg transition-all duration-200"
+              >
+                Register
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
 export default ParentRegistration;

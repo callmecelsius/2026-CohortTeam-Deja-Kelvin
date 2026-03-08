@@ -8,8 +8,10 @@ import {
   MenuItems,
 } from '@headlessui/react';
 import logo from '../../assets/paws.png';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { RxAvatar } from 'react-icons/rx';
+import useGlobalContext from '@/hooks/useGlobalContext';
+import { supabaseClient } from '@/lib/supabaseclient';
 
 const navigation = [
   { name: 'Parent Registration', href: '/parent-registration' },
@@ -20,6 +22,8 @@ function classNames(...classes: (string | undefined | null | false)[]): string {
 }
 
 export default function NavBar() {
+  const { user, setUser } = useGlobalContext();
+  const navigate = useNavigate();
   const location = useLocation();
 
   return (
@@ -86,22 +90,54 @@ export default function NavBar() {
                 transition
                 className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
               >
-                <MenuItem>
-                  <Link
-                    to="/employee-page"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Employee
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link
-                    to="/foster-login"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Foster Parents
-                  </Link>
-                </MenuItem>
+                {!user ||
+                  (user.email === '' && (
+                    <MenuItem>
+                      <Link
+                        to="/login"
+                        className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                      >
+                        Login
+                      </Link>
+                    </MenuItem>
+                  ))}
+
+                {user?.roles?.includes('employee') && (
+                  <MenuItem>
+                    <Link
+                      to="/employee-page"
+                      className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                    >
+                      Employee
+                    </Link>
+                  </MenuItem>
+                )}
+
+                {user?.roles?.includes('foster-parent') && (
+                  <MenuItem>
+                    <Link
+                      to="/foster-page"
+                      className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                    >
+                      Foster Parents
+                    </Link>
+                  </MenuItem>
+                )}
+
+                {(user?.roles?.length ?? 0) > 0 && (
+                  <MenuItem>
+                    <button
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                      onClick={async () => {
+                        await supabaseClient.auth.signOut();
+                        setUser(null);
+                        navigate('/');
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </MenuItem>
+                )}
               </MenuItems>
             </Menu>
           </div>

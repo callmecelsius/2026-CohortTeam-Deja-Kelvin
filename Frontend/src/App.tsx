@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { Outlet, Routes, Route } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import NavBar from './components/shared/NavBar';
@@ -7,19 +7,24 @@ import ParentRegistration from './components/register/ParentRegistration';
 import FosterDashboard from './pages/foster/FosterDashboard';
 import FosterPets from './pages/foster/FosterPets';
 import FosterStore from './pages/foster/FosterStore';
-import FosterParentLayout from './Layouts/FosterParentLayout';
-import EmployeeLayout from './Layouts/EmployeeLayout';
 import EmployeeDashboard from './pages/employee/EmployeeDashboard';
 import EmployeeFosterParents from './pages/employee/EmployeeFosterParents';
 import EmployeeInventory from './pages/employee/EmployeeInventory';
 import EmployeePets from './pages/employee/EmployeePets';
 import PetDetailPage from './pages/employee/PetDetailPage';
 import FosterHomesPage from './pages/employee/FosterHomesPage';
+import { useEffect, useState } from 'react';
+
+import { getUserByEmail } from './api/user';
+import useGlobalContext from './hooks/useGlobalContext';
+import AuthLayout from './Layouts/AuthLayout';
+import { TempLogin } from './components/shared/TempLogin';
+import { supabaseClient } from './lib/supabaseclient';
 import EmployeeRegistrationPage from './pages/employee/EmployeeRegistrationPage';
 import FosterLoginPage from './pages/FosterLoginPage';
 import EmployeeOrders from './pages/employee/EmployeeOrders';
 
-function Layout() {
+function BasicLayout() {
   return (
     <>
       <NavBar />
@@ -29,87 +34,69 @@ function Layout() {
   );
 }
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      //Registration Pages
-      {
-        path: 'parent-registration',
-        element: <ParentRegistration />,
-      },
-      //Login Pages
-      {
-        path: 'foster-login',
-        element: <FosterLoginPage />,
-      },
-    ],
-  },
-  //Foster Parent Pages
-  {
-    path: '/',
-    element: <FosterParentLayout />,
-    children: [
-      {
-        path: 'foster-page',
-        element: <FosterDashboard />,
-      },
-      {
-        path: 'foster-pets-page',
-        element: <FosterPets />,
-      },
-      {
-        path: 'foster-store-page',
-        element: <FosterStore />,
-      },
-    ],
-  },
-  //Employee Pages
-  {
-    path: '/',
-    element: <EmployeeLayout />,
-    children: [
-      {
-        path: 'employee-page',
-        element: <EmployeeDashboard />,
-      },
-      {
-        path: 'employee-foster-parents-page',
-        element: <EmployeeFosterParents />,
-      },
-      {
-        path: 'employee-inventory-page',
-        element: <EmployeeInventory />,
-      },
-      {
-        path: 'employee-pets-page',
-        element: <EmployeePets />,
-      },
-      {
-        path: 'employee-pets-page/:id',
-        element: <PetDetailPage />
-      },
-      {
-        path: 'employee-foster-homes-page/',
-        element: <FosterHomesPage/>
-      },
-      {
-        path: 'employee-orders-page',
-        element: <EmployeeOrders />
-      },
-      {
-        path: 'employee-registration-page',
-        element: <EmployeeRegistrationPage />,
-      },
-    ],
-  },
-]);
-
 export default function App() {
-  return <RouterProvider router={router} />;
+  const { setUser } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabaseClient.auth.onAuthStateChange(() => {
+      supabaseClient.auth.getClaims().then(async ({ data }) => {
+        console.log('Data from getClaims:', data);
+        if (data) {
+          console.log('Auth state changed, updated claims:', data.claims.email);
+          const userData = await getUserByEmail(
+            data.claims.email as unknown as string
+          );
+          setUser(userData);
+        }
+        setLoading(false);
+      });
+    });
+  }, [setUser]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <Routes>
+      <Route element={<AuthLayout usersRole="foster-parent" />}>
+        <Route path="/foster-page" element={<FosterDashboard />} />
+        <Route path="/foster-pets-page" element={<FosterPets />} />
+        <Route path="/foster-store-page" element={<FosterStore />} />
+      </Route>
+      <Route element={<AuthLayout usersRole="employee" />}>
+        <Route path="/employee-page" element={<EmployeeDashboard />} />
+        <Route
+          path="/employee-foster-parents-page"
+          element={<EmployeeFosterParents />}
+        />
+        <Route
+          path="/employee-inventory-page"
+          element={<EmployeeInventory />}
+        />
+        <Route path="/employee-pets-page" element={<EmployeePets />} />
+        <Route path="/employee-pets-page/:id" element={<PetDetailPage />} />
+        <Route
+          path="/employee-foster-homes-page/"
+          element={<FosterHomesPage />}
+        />
+      </Route>
+      <Route element={<BasicLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/parent-registration" element={<ParentRegistration />} />
+        <Route path="/login" element={<TempLogin />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Route>
+    </Routes>
+  );
+}
+
+function ErrorPage() {
+  return (
+    <div>
+      <h1>404 - Page Not Found</h1>
+      <p>The page you are looking for does not exist.</p>
+    </div>
+  );
 }

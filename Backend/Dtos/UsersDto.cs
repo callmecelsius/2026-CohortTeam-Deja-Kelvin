@@ -28,6 +28,6 @@ namespace Backend.Dtos
 
         public DateTime? UpdatedOn { get; set; }
 
-      
+        public FosterParentGetDto? FosterParent { get; set; }
     }
 }

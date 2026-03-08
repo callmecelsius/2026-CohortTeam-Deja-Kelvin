@@ -1,3 +1,5 @@
+import type { FosterParent } from './FosterParentType';
+
 export interface User {
   id: number;
   firstName?: string;
@@ -11,4 +13,6 @@ export interface User {
   zip?: number;
   createdOn?: string;
   updatedOn?: string;
+  fosterParent?: FosterParent;
+  roles?: string[];
 }
