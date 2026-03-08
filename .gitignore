@@ -279,5 +279,7 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
-.claude
+
 supbasetables.md
+.cursor/
+.claude/
