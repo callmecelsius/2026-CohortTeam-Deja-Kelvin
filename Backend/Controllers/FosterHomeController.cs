@@ -63,7 +63,7 @@ namespace Backend.Controllers
     [HttpPost]
     public ActionResult Post([FromBody] FosterHomeDto value)
     {
-      var newFosterHome = new FosterHome()
+    var newFosterHome = new FosterHome()
       {
         HomeName = value.HomeName,
         Address = value.Address,
