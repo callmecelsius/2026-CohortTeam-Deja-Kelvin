@@ -1,13 +1,19 @@
 import { getInventory, updateInventory, deleteInventory, updateProduct, getProduct, getCategories, deleteProduct, createInventory, createProduct } from "@/api/inventory";
 import { DataTable } from "@/components/shared/DataTable";
-import { ActionsDropdown } from "@/components/shared/ActionsDropdown";
 import type { Inventory, InventoryFlattened,ProductDto,ProductCategoryDto } from "../../../../types/inventoryType";
 
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InventoryModal } from "./InventoryModal";
-import { toast, Toaster } from "sonner";
 
 // Helper function to flatten inventory data
 const flattenInventory = (
@@ -45,10 +51,10 @@ export function InventoryTable() {
     const data = await getInventory();
     const data_product = await getProduct();
     const data_category = await getCategories();
-    console.log('data', data);
+    console.log('data',data);
     const flattened = Array.isArray(data) ? data.map(item =>
-      flattenInventory(item, data_product, data_category)) : [];
-
+        flattenInventory(item, data_product, data_category)) : [];
+    
     setInventory(flattened);
   };
 
@@ -64,16 +70,16 @@ export function InventoryTable() {
   };
 
   //deletes inventory from database
-  const handleDelete = async (id: number, productId: number) => {
+  const handleDelete =async (id: number, productId: number) => {
     deleteInventory(id);
     deleteProduct(productId);
-    toast.success("Deleted successfully");
+    alert("Deleted successfully");
     await loadInventory();
   };
 
   //opens modal when user clicks add inventory button
-  const handleAddInventory = () => {
-    setEditingInventory(null);
+  const handleAddInventory = () => {   
+    setEditingInventory(null); 
     setIsModalOpen(true);
   };
 
@@ -88,6 +94,7 @@ export function InventoryTable() {
     name: string;
   }) => {
     try {
+      //TODO
       if (editingInventory) {
         await updateInventory(editingInventory.id, {
           productId: formData.productid,
@@ -100,23 +107,23 @@ export function InventoryTable() {
           unitPrice: formData.unitprice,
           id: formData.productid,
         });
-
-        toast.success("Updated successfully");
+        
+        alert("Updated successfully");
       } else {
-        const newProduct = await createProduct({
+          const newProduct = await createProduct({
           categoryId: formData.categoryid,
           description: formData.description,
           unitPrice: formData.unitprice,
         });
-        await createInventory({
+         await createInventory({
           productId: newProduct.id,
-          quantityOnHand: formData.quantityonhand,
-          reorderLevel: formData.reorderlevel,
-        });
-
-        toast.success("Inserted successfully");
+        quantityOnHand: formData.quantityonhand,
+        reorderLevel: formData.reorderlevel,
+            });
+        
+        alert("Inserted successfully");
       }
-
+      
 
       // Refresh table after submission
       await loadInventory();
@@ -127,26 +134,38 @@ export function InventoryTable() {
     }
   };
 
-
+  
   const columns = [
     {
       header: "Actions",
       cell: (item: InventoryFlattened) => (
-        <ActionsDropdown
-          actions={[
-            {
-              label: "Edit",
-              icon: <Pencil className="mr-2 h-4 w-4" />,
-              onClick: () => handleEdit(item),
-            },
-            {
-              label: "Delete",
-              icon: <Trash2 className="mr-2 h-4 w-4" />,
-              onClick: () => handleDelete(item.id, item.productid),
-              className: "text-red-600",
-            },
-          ]}
-        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-600"
+            >
+              <MoreVertical className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem
+              onClick={() => handleEdit(item)}
+              className="cursor-pointer"
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleDelete(item.id, item.productid)}
+              className="text-red-600"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
     },
     //  {
@@ -204,12 +223,11 @@ export function InventoryTable() {
           <span className="text-gray-400 italic">N/A</span>
         ),
     },
-
+    
   ];
 
   return (
     <div className="w-full p-6 space-y-4">
-      <Toaster richColors position="top-center" />
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Inventory
@@ -250,9 +268,9 @@ export function InventoryTable() {
               name: editingInventory.name ?? "",
             }
             : undefined
-
+        
         }
-        isEditing={editingInventory ? true : false}
+        isEditing={editingInventory?true:false}
       />
     </div>
   );
