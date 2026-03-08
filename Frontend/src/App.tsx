@@ -20,6 +20,7 @@ import useGlobalContext from './hooks/useGlobalContext';
 import AuthLayout from './Layouts/AuthLayout';
 import { TempLogin } from './components/shared/TempLogin';
 import { supabaseClient } from './lib/supabaseclient';
+import EmployeeOrders from './pages/employee/EmployeeOrders';
 
 function BasicLayout() {
   return (
@@ -64,6 +65,7 @@ export default function App() {
       </Route>
       <Route element={<AuthLayout usersRole="employee" />}>
         <Route path="/employee-page" element={<EmployeeDashboard />} />
+        <Route path="/employee-orders-page" element={<EmployeeOrders />} />
         <Route
           path="/employee-foster-parents-page"
           element={<EmployeeFosterParents />}

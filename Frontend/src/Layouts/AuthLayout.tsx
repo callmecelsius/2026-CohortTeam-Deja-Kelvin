@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   PawPrint,
   ShoppingBag,
+  ShoppingCart,
   Users,
 } from 'lucide-react';
 import { UserAvatar } from '@/components/shared/UserAvatar';
@@ -25,6 +26,7 @@ const fosterNavItems: NavItem[] = [
 
 const employeeNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/employee-page', icon: LayoutDashboard },
+  { name: 'Orders', href: '/employee-orders-page', icon: ShoppingCart },
   {
     name: 'Foster Parents',
     href: '/employee-foster-parents-page',

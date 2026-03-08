@@ -97,12 +97,11 @@ namespace Backend.Controllers
                     OrderId = orderitemDto.OrderId,
                     ProductId = orderitemDto.ProductId,
                     Quantity = orderitemDto.Quantity,
-                    
+
                 };
 
                 _unitOfWork.OrderItemRepository.Insert(orderitem);
                 _unitOfWork.Save();
-                _unitOfWork.Dispose();
                 return Ok("orderitem inserted successfully.");
 
             }

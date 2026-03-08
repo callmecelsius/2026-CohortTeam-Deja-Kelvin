@@ -38,10 +38,10 @@ namespace Backend.Controllers
     [HttpGet("severity")]
     public ActionResult GetAnimalSeverity()
     {
-      var animalSeverity = _unitOfWork.AnimalConditionRepository
-        .Get(filter: animalCondition => animalCondition.Severity.ToLower() == "high")
-        .Count();
-      
+      var animalSeverity = _unitOfWork.AnimalConditionRepository.Get(filter: a =>
+            a.Severity != null &&
+            (a.Severity.ToLower() == "high" || a.Severity.ToLower() == "critical")).Count();
+
       return Ok( new { animalSeverity });
     }
 
