@@ -25,13 +25,6 @@ interface FosterParentPayload {
     fosterHomeId: string;
 }
 
-interface AvailabilityPayload {
-    availability: number;
-    capacity: number;
-    fosterHomeId: string;
-    occupiedSlots: number;
-}
-
 export const registerParent = async (data: RegistrationData) => {
     try {
         if (data.fosterHomeId && data.fosterHomeId !== '') {

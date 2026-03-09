@@ -5,7 +5,7 @@ import {
   updateHome,
 } from '@/api/fosterhome';
 import { DataTable } from '@/components/shared/DataTable';
-import { Button } from '@headlessui/react';
+import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import type { FosterHome } from 'types/FosterHomeType';
 import { FosterHomesModal } from './FosterHomesModal';
@@ -105,9 +105,9 @@ export function FosterHomesTable() {
   };
 
   return (
-    <div className="relative w-full p-6 space-y-6">
+    <div className="w-full p-6 space-y-4">
       <div className="flex justify-between items-center">
-        <span></span>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Homes</h2>
         <Button
           onClick={handleAddHome}
           className="bg-[#D9BF86] text-gray-900 hover:bg-[#c9af76] font-semibold px-6 py-2 shadow-md hover:shadow-lg hover:cursor-pointer transition-all duration-200"

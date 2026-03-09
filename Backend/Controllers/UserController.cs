@@ -3,7 +3,6 @@ using Backend.Data;
 using Backend.Data.Models;
 using Backend.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -129,11 +128,20 @@ namespace Backend.Controllers
                 {
                     return BadRequest("User details are required.");
                 }
+                // Auto-assign next employeeId if registering as employee
+                int? assignedEmployeeId = null;
+                if (userDto.EmployeeId != null)
+                {
+                    var allUsers = _unitOfWork.UserRepository.Get(u => u.EmployeeId != null);
+                    var maxId = allUsers.Any() ? allUsers.Max(u => u.EmployeeId!.Value) : 0;
+                    assignedEmployeeId = maxId + 1;
+                }
+
                 var user = new User
                 {
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
-                    EmployeeId = userDto.EmployeeId,
+                    EmployeeId = assignedEmployeeId,
                     PhoneNumber = userDto.Phone,
                     Email = userDto.Email,
                     Address = userDto.Address,

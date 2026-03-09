@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   PawPrint,
   ShoppingBag,
+  ShoppingCart,
+  UserPlus,
   Users,
 } from 'lucide-react';
 import { UserAvatar } from '@/components/shared/UserAvatar';
@@ -33,6 +35,8 @@ const employeeNavItems: NavItem[] = [
   { name: 'Foster Homes', href: '/employee-foster-homes-page', icon: Home },
   { name: 'Inventory', href: '/employee-inventory-page', icon: Box },
   { name: 'Pets', href: '/employee-pets-page', icon: PawPrint },
+  { name: 'Registration', href: '/employee-registration-page', icon: UserPlus },
+  { name: 'Orders', href: '/employee-orders-page', icon: ShoppingCart },
 ];
 
 export default function AuthLayout({ usersRole }: { usersRole: string }) {

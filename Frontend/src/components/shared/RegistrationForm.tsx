@@ -126,7 +126,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
         firstname: data.firstname,
         lastname: data.lastname,
         email: data.email,
-        phone: data.phone,
+        phone: data.phone.replace(/-/g, ''),
         address: data.address,
         city: data.city,
         state: data.state,
@@ -151,16 +151,25 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
         password: data.password,
       });
 
-      if (supabaseResponse.data.user) {
+      if (supabaseResponse.error) {
+        console.error('Supabase signUp error:', supabaseResponse.error);
+        toast.error('Account creation failed: ' + supabaseResponse.error.message);
+        return;
+      }
+
+      if (variant === 'parent') {
         const userData = await getUserByEmail(data.email);
         if (userData) {
           setUser(userData);
-          navigate(variant === 'parent' ? '/foster-page' : '/employee-page');
+          form.reset();
+          toast.success(`${data.firstname} ${data.lastname} successfully registered!`);
+          navigate('/foster-page');
+          return;
         }
       }
 
       form.reset();
-      toast.success('Registration successful!');
+      toast.success(`${data.firstname} ${data.lastname} successfully registered!`);
     } catch (err) {
       console.error('Registration error:', err);
       toast.error('Registration failed!');
