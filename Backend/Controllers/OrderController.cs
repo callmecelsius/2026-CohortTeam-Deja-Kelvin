@@ -93,6 +93,49 @@ namespace Backend.Controllers
             return Ok(dto);
         }
 
+        [HttpGet("fosterhome/{fosterHomeId}")]
+        public ActionResult<IEnumerable<OrderDto>> GetByFosterHome(int fosterHomeId)
+        {
+            var fosterParents = _unitOfWork.FosterParentRepository
+                .Get(fp => fp.FosterHomeId == fosterHomeId);
+
+            var userIds = fosterParents
+                .Where(fp => fp.UserId.HasValue)
+                .Select(fp => fp.UserId.Value)
+                .ToList();
+
+            if (!userIds.Any())
+            {
+                return Ok(new List<OrderDto>());
+            }
+
+            var orders = _unitOfWork.OrderRepository
+                .Get(
+                    filter: o => o.UserId.HasValue && userIds.Contains(o.UserId.Value),
+                    includeProperties: "OrderItems,User,OrderItems.Product,OrderItems.Product.Category"
+                );
+
+            var result = orders.Select(o => new OrderDto
+            {
+                Id = o.Id,
+                UserId = o.UserId,
+                UserName = o.User != null ? $"{o.User.FirstName} {o.User.LastName}" : null,
+                OrderComplete = o.OrderComplete,
+                DateOrdered = o.DateOrdered,
+                OrderItems = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    Id = oi.Id,
+                    OrderId = oi.OrderId,
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    ProductName = oi.Product?.Description,
+                    CategoryName = oi.Product?.Category?.Name
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
+        }
+
         [HttpPost]
         /*
                  {

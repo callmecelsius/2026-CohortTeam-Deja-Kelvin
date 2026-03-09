@@ -84,14 +84,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-muted/40 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Employee Dashboard</h1>
-
-          </div>
 
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {stats.map((item, index) => {
+          {stats.map((item) => {
             const Icon = item.icon
             return (
 

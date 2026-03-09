@@ -3,32 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart } from "lucide-react";
-import { getOrders } from "@/api/order";
+import { getOrdersByFosterHome } from "@/api/order";
 import type { OrderDto } from "../../../types/orderType";
-
-// TODO: Replace with auth user ID when Supabase auth is implemented
-const TEMP_USER_ID = 17;
+import useGlobalContext from "@/hooks/useGlobalContext";
 
 export default function FosterDashboard() {
+  const { user } = useGlobalContext();
+  const fosterHomeId = user?.fosterParent?.fosterHomeId;
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load orders when the page first mounts
   useEffect(() => {
     loadOrders();
-  }, []);
+  }, [fosterHomeId]);
 
   async function loadOrders() {
+    if (!fosterHomeId) {
+      setIsLoading(false);
+      return;
+    }
     try {
       setIsLoading(true);
-      const allOrders = await getOrders();
-
-      // Only show orders for this foster parent
-      const myOrders = allOrders.filter(
-        (order: OrderDto) => order.userId === TEMP_USER_ID
-      );
-
-      setOrders(myOrders);
+      const homeOrders = await getOrdersByFosterHome(fosterHomeId);
+      setOrders(homeOrders);
     } catch (error) {
       console.error("Error loading orders:", error);
     } finally {
@@ -48,9 +45,14 @@ export default function FosterDashboard() {
 
   return (
     <div className="w-full p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-        Dashboard
-      </h1>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Welcome back, {user?.firstName}
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Here's your foster home overview.
+        </p>
+      </div>
 
       {/* Order history section */}
       <div className="space-y-4">
