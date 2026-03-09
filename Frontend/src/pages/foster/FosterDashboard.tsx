@@ -1,33 +1,44 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Home, ShoppingCart } from "lucide-react";
+import { Home, MapPin, PawPrint, ShoppingCart, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { getOrdersByFosterHome } from "@/api/order";
+import { getAnimalByFosterId } from "@/api/mypets";
 import type { OrderDto } from "../../../types/orderType";
+import type { Animal } from "../../../types/animalType";
 import useGlobalContext from "@/hooks/useGlobalContext";
 
 export default function FosterDashboard() {
   const { user } = useGlobalContext();
   const fosterHomeId = user?.fosterParent?.fosterHomeId;
+  const fosterHome = user?.fosterParent?.fosterHome;
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<OrderDto[]>([]);
+  const [animals, setAnimals] = useState<Animal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadOrders();
+    loadDashboardData();
   }, [fosterHomeId]);
 
-  async function loadOrders() {
+  async function loadDashboardData() {
     if (!fosterHomeId) {
       setIsLoading(false);
       return;
     }
     try {
       setIsLoading(true);
-      const homeOrders = await getOrdersByFosterHome(fosterHomeId);
+      const [homeOrders, homeAnimals] = await Promise.all([
+        getOrdersByFosterHome(fosterHomeId),
+        getAnimalByFosterId(fosterHomeId),
+      ]);
       setOrders(homeOrders);
+      setAnimals(homeAnimals);
     } catch (error) {
-      console.error("Error loading orders:", error);
+      console.error("Error loading dashboard data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +64,62 @@ export default function FosterDashboard() {
           Here's your foster home overview.
         </p>
       </div>
+
+      {/* Stat cards */}
+      {fosterHomeId && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Foster Home Info */}
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6 flex flex-col justify-between h-48">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-primary/10">
+                  <Home className="h-6 w-6" />
+                </div>
+                <Badge variant="secondary" className="text-base px-3 py-1 rounded-xl">
+                  <Users className="h-4 w-4 mr-1" />
+                  {fosterHome?.capacity ?? "N/A"}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-lg font-semibold">{fosterHome?.homeName ?? "My Foster Home"}</h2>
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  {fosterHome?.address ?? "No address on file"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* My Pets Summary */}
+          <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6 flex flex-col justify-between h-48">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-primary/10">
+                  <PawPrint className="h-6 w-6" />
+                </div>
+                <Badge variant="secondary" className="text-base px-3 py-1 rounded-xl">
+                  {animals.length}
+                </Badge>
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-lg font-semibold">Pets in Your Home</h2>
+                <p className="text-sm text-muted-foreground truncate">
+                  {animals.length > 0
+                    ? animals.map((a) => a.name ?? "Unnamed").join(", ")
+                    : "No pets currently assigned"}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="rounded-xl mt-4"
+                onClick={() => navigate("/foster-pets-page")}
+              >
+                View My Pets
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Order history section */}
       <div className="space-y-4">

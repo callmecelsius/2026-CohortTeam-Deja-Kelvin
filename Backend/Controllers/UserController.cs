@@ -72,16 +72,25 @@ namespace Backend.Controllers
                 UpdatedOn = user.UpdatedOn
             };
 
-            var fosterParents = _unitOfWork.FosterParentRepository.Get(f => f.UserId == user!.Id);
+            var fosterParents = _unitOfWork.FosterParentRepository.Get(
+                f => f.UserId == user!.Id,
+                includeProperties: "FosterHome"
+            );
             if (fosterParents.Any())
             {
                 var fosterParent = fosterParents.FirstOrDefault();
-                userDto.FosterParent = new FosterParentGetDto { 
-                    ApprovedDate = fosterParent!.ApprovedDate, 
-                    FosterHomeId = fosterParent.FosterHomeId, 
-                    Id = fosterParent.Id, 
-                    Status = fosterParent.Status, 
-                    UserId = fosterParent.UserId 
+                userDto.FosterParent = new FosterParentGetDto {
+                    ApprovedDate = fosterParent!.ApprovedDate,
+                    FosterHomeId = fosterParent.FosterHomeId,
+                    Id = fosterParent.Id,
+                    Status = fosterParent.Status,
+                    UserId = fosterParent.UserId,
+                    FosterHome = fosterParent.FosterHome != null ? new FosterHomeDto {
+                        Id = fosterParent.FosterHome.Id,
+                        HomeName = fosterParent.FosterHome.HomeName,
+                        Address = fosterParent.FosterHome.Address,
+                        Capacity = fosterParent.FosterHome.Capacity
+                    } : null
                 };
 
             }
