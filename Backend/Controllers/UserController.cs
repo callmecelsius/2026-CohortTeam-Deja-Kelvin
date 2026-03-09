@@ -3,7 +3,6 @@ using Backend.Data;
 using Backend.Data.Models;
 using Backend.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -73,16 +72,25 @@ namespace Backend.Controllers
                 UpdatedOn = user.UpdatedOn
             };
 
-            var fosterParents = _unitOfWork.FosterParentRepository.Get(f => f.UserId == user!.Id);
+            var fosterParents = _unitOfWork.FosterParentRepository.Get(
+                f => f.UserId == user!.Id,
+                includeProperties: "FosterHome"
+            );
             if (fosterParents.Any())
             {
                 var fosterParent = fosterParents.FirstOrDefault();
-                userDto.FosterParent = new FosterParentGetDto { 
-                    ApprovedDate = fosterParent!.ApprovedDate, 
-                    FosterHomeId = fosterParent.FosterHomeId, 
-                    Id = fosterParent.Id, 
-                    Status = fosterParent.Status, 
-                    UserId = fosterParent.UserId 
+                userDto.FosterParent = new FosterParentGetDto {
+                    ApprovedDate = fosterParent!.ApprovedDate,
+                    FosterHomeId = fosterParent.FosterHomeId,
+                    Id = fosterParent.Id,
+                    Status = fosterParent.Status,
+                    UserId = fosterParent.UserId,
+                    FosterHome = fosterParent.FosterHome != null ? new FosterHomeDto {
+                        Id = fosterParent.FosterHome.Id,
+                        HomeName = fosterParent.FosterHome.HomeName,
+                        Address = fosterParent.FosterHome.Address,
+                        Capacity = fosterParent.FosterHome.Capacity
+                    } : null
                 };
 
             }
@@ -129,11 +137,20 @@ namespace Backend.Controllers
                 {
                     return BadRequest("User details are required.");
                 }
+                // Auto-assign next employeeId if registering as employee
+                int? assignedEmployeeId = null;
+                if (userDto.EmployeeId != null)
+                {
+                    var allUsers = _unitOfWork.UserRepository.Get(u => u.EmployeeId != null);
+                    var maxId = allUsers.Any() ? allUsers.Max(u => u.EmployeeId!.Value) : 0;
+                    assignedEmployeeId = maxId + 1;
+                }
+
                 var user = new User
                 {
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
-                    EmployeeId = userDto.EmployeeId,
+                    EmployeeId = assignedEmployeeId,
                     PhoneNumber = userDto.Phone,
                     Email = userDto.Email,
                     Address = userDto.Address,

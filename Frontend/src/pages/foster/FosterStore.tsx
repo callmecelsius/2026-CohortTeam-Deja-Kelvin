@@ -15,6 +15,7 @@ import type { CartItemData } from "@/components/fosterparent/store/CartItem";
 // API functions (reusing existing ones from inventory)
 import { getInventory, getProduct, getCategories } from "@/api/inventory";
 import { createOrder, createOrderItem } from "@/api/order";
+import useGlobalContext from "@/hooks/useGlobalContext";
 
 // Types
 import type {
@@ -23,9 +24,6 @@ import type {
   ProductDto,
   ProductCategoryDto,
 } from "../../../types/inventoryType";
-
-// TODO: Replace with auth user ID when Supabase auth is implemented
-const TEMP_USER_ID = 17;
 
 // Helper function to join inventory + product + category data into one flat object
 function flattenInventoryItem(
@@ -49,6 +47,8 @@ function flattenInventoryItem(
 }
 
 export default function FosterStore() {
+  const { user } = useGlobalContext();
+
   // --- State for product data ---
   const [products, setProducts] = useState<InventoryFlattened[]>([]);
   const [categories, setCategories] = useState<ProductCategoryDto[]>([]);
@@ -200,7 +200,7 @@ export default function FosterStore() {
 
       // Step 1: Create the order (backend returns the created order with its ID)
       const orderData = {
-        userId: TEMP_USER_ID,
+        userId: user.id,
         orderComplete: false,
         dateOrdered: new Date().toISOString(),
       };

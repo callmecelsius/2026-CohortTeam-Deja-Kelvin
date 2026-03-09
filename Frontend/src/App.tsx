@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { getUserByEmail } from './api/user';
 import useGlobalContext from './hooks/useGlobalContext';
 import AuthLayout from './Layouts/AuthLayout';
-import { TempLogin } from './components/shared/TempLogin';
+import LoginPage from './pages/LoginPage';
 import { supabaseClient } from './lib/supabaseclient';
 import EmployeeRegistrationPage from './pages/employee/EmployeeRegistrationPage';
 import EmployeeOrders from './pages/employee/EmployeeOrders';
@@ -88,7 +88,7 @@ export default function App() {
       <Route element={<BasicLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/parent-registration" element={<ParentRegistration />} />
-        <Route path="/login" element={<TempLogin />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>

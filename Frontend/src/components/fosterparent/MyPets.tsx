@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { getAnimalByFosterId } from "@/api/mypets";
 import { PetDetailCard } from "@/components/fosterparent/PetDetailCard";
 import type { Animal } from "../../../types/animalType";
+import useGlobalContext from "@/hooks/useGlobalContext";
 import {
     Pagination,
     PaginationContent,
@@ -12,6 +13,8 @@ import {
 } from "@/components/ui/pagination";
 
 const MyPets = () => {
+    const { user } = useGlobalContext();
+    const fosterHomeId = user?.fosterParent?.fosterHomeId;
     const [animals, setAnimals] = useState<Animal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -21,10 +24,13 @@ const MyPets = () => {
 
     useEffect(() => {
         async function fetchFosterAnimals() {
+            if (!fosterHomeId) {
+                setLoading(false);
+                return;
+            }
             try {
-                const data = await getAnimalByFosterId(1);
+                const data = await getAnimalByFosterId(fosterHomeId);
                 setAnimals(data)
-                console.log(data)
             } catch {
                 setError(true);
             } finally {
@@ -33,7 +39,7 @@ const MyPets = () => {
         }
 
         fetchFosterAnimals();
-    }, [])
+    }, [fosterHomeId])
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Failed to load pets.</p>;

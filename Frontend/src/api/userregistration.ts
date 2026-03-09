@@ -1,8 +1,7 @@
 import api from "./axios";
 
 // User creation response
-interface RegistrationData {
-    username: string;
+export interface RegistrationData {
     firstname: string;
     lastname: string;
     email: string;
@@ -11,7 +10,7 @@ interface RegistrationData {
     city: string;
     state: string;
     zip: string;
-    fosterHomeId: string;
+    fosterHomeId?: string;
 }
 
 interface UserResponse {
@@ -26,16 +25,9 @@ interface FosterParentPayload {
     fosterHomeId: string;
 }
 
-interface AvailabilityPayload {
-    availability: number;
-    capacity: number;
-    fosterHomeId: string;
-    occupiedSlots: number;
-}
-
 export const registerParent = async (data: RegistrationData) => {
     try {
-        if (data.fosterHomeId != '') {
+        if (data.fosterHomeId && data.fosterHomeId !== '') {
             const AvailabilityPayload = await api.get(`/FosterHome/${data.fosterHomeId}/availability`);
             console.log('AvailabilityPayload', AvailabilityPayload.data.availability);
             if (AvailabilityPayload.data.availability > 0) {
@@ -80,6 +72,24 @@ export interface FosterHome {
     id: string;
     homeName: string;
 }
+
+export const registerEmployee = async (data: RegistrationData) => {
+    try {
+        const userResponse = await api.post<UserResponse>("/User", {
+            ...data,
+            employeeId: 1,
+        });
+        console.log('userResponse', userResponse);
+        const userId = userResponse.data.id;
+        if (!userId) {
+            throw new Error("Failed to get userid after employee registration");
+        }
+        return userResponse.data;
+    } catch (error: any) {
+        console.error("Employee registration error:", error);
+        throw error;
+    }
+};
 
 export const getFosterHomes = async (): Promise<FosterHome[]> => {
     try {

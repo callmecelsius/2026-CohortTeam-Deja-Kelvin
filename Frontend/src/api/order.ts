@@ -17,6 +17,11 @@ export const getOrders = async () => {
   return res.data;
 };
 
+export const getOrdersByFosterHome = async (fosterHomeId: number) => {
+  const res = await api.get(`/Order/fosterhome/${fosterHomeId}`);
+  return res.data;
+};
+
 //put - update an order (used to mark complete)
 export const updateOrder = async (id: number, orderData: UpdateOrderDto) => {
   const res = await api.put(`/Order/${id}`, orderData);

@@ -11,12 +11,12 @@ import { UserAvatar } from '@/components/shared/UserAvatar';
 
 const employeeNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/employee-page', icon: LayoutDashboard },
-  { name: 'Foster Parents', href: '/employee-foster-parents-page', icon: Users },
-  { name: 'Foster Homes', href:'/employee-foster-homes-page', icon: Home},
+  { name: 'Orders', href: '/employee-orders-page', icon: ShoppingCart },
   { name: 'Inventory', href: '/employee-inventory-page', icon: Box },
   { name: 'Pets', href: '/employee-pets-page', icon: PawPrint },
+  { name: 'Foster Parents', href: '/employee-foster-parents-page', icon: Users },
+  { name: 'Foster Homes', href: '/employee-foster-homes-page', icon: Home },
   { name: 'Registration', href: '/employee-registration-page', icon: UserPlus },
-  { name: 'Orders', href: '/employee-orders-page', icon: ShoppingCart },
 ];
 
 export default function EmployeeLayout() {
