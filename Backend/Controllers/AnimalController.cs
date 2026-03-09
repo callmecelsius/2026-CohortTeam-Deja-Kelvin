@@ -42,7 +42,7 @@ namespace Backend.Controllers
         public IEnumerable<AnimalDto> GetFosterAnimals(int fosterHomeId)
         {
             var fosterAnimal = _unitOfWork.FosterAssignmentRepository.Get(f => f.FosterHomeId == fosterHomeId, includeProperties: "Animal");
-             var animals = fosterAnimal.Where(a => a.Animal != null).Select(a => a.Animal).Select(a => new AnimalDto {
+             var animals = fosterAnimal.Where(a => a.Animal != null).Select(a => a.Animal!).Select(a => new AnimalDto {
                 Id = a.Id,
                 Name = a.Name,
                 Breed = a.Breed,

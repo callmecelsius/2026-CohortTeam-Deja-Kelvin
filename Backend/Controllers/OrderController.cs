@@ -101,7 +101,7 @@ namespace Backend.Controllers
 
             var userIds = fosterParents
                 .Where(fp => fp.UserId.HasValue)
-                .Select(fp => fp.UserId.Value)
+                .Select(fp => fp.UserId!.Value)
                 .ToList();
 
             if (!userIds.Any())

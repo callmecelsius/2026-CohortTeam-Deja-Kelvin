@@ -47,7 +47,7 @@ namespace Backend.Controllers
                 }
                 var productCategory = new ProductCategory
                 {
-                    Name = productCategoryDto.Name.ToLower()
+                    Name = productCategoryDto.Name?.ToLower() ?? string.Empty
 
                 };
 

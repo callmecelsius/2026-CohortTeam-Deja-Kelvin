@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart } from "lucide-react";
+import { Home, ShoppingCart } from "lucide-react";
 import { getOrdersByFosterHome } from "@/api/order";
 import type { OrderDto } from "../../../types/orderType";
 import useGlobalContext from "@/hooks/useGlobalContext";
@@ -60,10 +60,19 @@ export default function FosterDashboard() {
           My Orders
         </h2>
 
-        {isLoading ? (
+        {!fosterHomeId ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Home className="h-10 w-10 mb-2 opacity-50" />
+              <p>No foster home assigned</p>
+              <p className="text-sm">
+                You are not currently assigned to a foster home.
+              </p>
+            </CardContent>
+          </Card>
+        ) : isLoading ? (
           <p className="text-muted-foreground">Loading orders...</p>
         ) : orders.length === 0 ? (
-          // Empty state when no orders exist
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <ShoppingCart className="h-10 w-10 mb-2 opacity-50" />
