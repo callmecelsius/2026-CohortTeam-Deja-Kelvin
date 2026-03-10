@@ -35,3 +35,8 @@ export const assignPetToFosterHome = async (animalId: number, fosterHomeId: numb
   const res = await api.post(`/Animal/${animalId}/assign`, { fosterHomeId });
   return res.data;
 };
+
+export const getAnimalSeverities = async (): Promise<{ animalId: number; severity: string }[]> => {
+  const res = await api.get<{ animalId: number; severity: string }[]>("/AnimalCondition/severity/animals");
+  return res.data;
+};
