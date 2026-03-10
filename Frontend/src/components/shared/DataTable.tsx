@@ -17,6 +17,7 @@ export function DataTable({
   columns: { header: string; accessor?: string; cell?: (row: any) => ReactNode }[];
   data: any[];
   getRowId?: (row: any, index: number) => string | number;
+  emptyMessage?: string;
 }) {
   return (
     <div className="w-full space-y-6">

@@ -15,6 +15,7 @@ import {
 const MyPets = () => {
     const { user } = useGlobalContext();
     const fosterHomeId = user?.fosterParent?.fosterHomeId;
+    console.log("Foster Home ID:", fosterHomeId);
     const [animals, setAnimals] = useState<Animal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);

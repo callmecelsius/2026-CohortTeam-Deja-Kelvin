@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -9,8 +10,9 @@ import { insertBehaviorLog } from "@/api/mypets";
 import { toast, Toaster } from "sonner";
 import useGlobalContext from '@/hooks/useGlobalContext';
 
+
 type BehaviorModalProps = {
-    animalId: number;   
+    animalId: number;  
     onAdd: (behavior: {
         AnimalId: number;
         ReportedByUserId: number;
@@ -21,7 +23,7 @@ type BehaviorModalProps = {
     }) => void;
 };
 
-const BehaviorModal: React.FC<BehaviorModalProps> = ({ animalId,    
+const BehaviorModal: React.FC<BehaviorModalProps> = ({ animalId,
     onAdd, }) => {
     const { user } = useGlobalContext();
     const [open, setOpen] = useState(false);
@@ -32,13 +34,14 @@ const BehaviorModal: React.FC<BehaviorModalProps> = ({ animalId,
 
     const handleAdd = async () => {
         if (!user?.id) {
-                    toast.error("User not found");
-                    return;
-                }
+            toast.error("User not found");
+            return;
+        }
 
-        const newBehavior = {                       
-            AnimalId: animalId,           
-            ReportedByUserId: user?.id,        
+
+        const newBehavior = {
+            AnimalId: animalId,
+            ReportedByUserId: user?.id,
             BehaviorType: behaviorType,
             Notes: notes,
             DateReported: new Date(),
@@ -65,7 +68,7 @@ const BehaviorModal: React.FC<BehaviorModalProps> = ({ animalId,
         }
     };
     return (
-        
+
         <Dialog open={open} onOpenChange={setOpen}>
             <Toaster richColors position="top-center" />
             <DialogTrigger asChild>
@@ -83,16 +86,16 @@ const BehaviorModal: React.FC<BehaviorModalProps> = ({ animalId,
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                                        
+               
                     <div className="space-y-2">
-                    <Label htmlFor="behavior-type">Behavior Type</Label>
-                    <Textarea
-                        placeholder="Behavior type"
-                        value={behaviorType}
-                        onChange={(e) => setBehaviorType(e.target.value)}
-                    /> 
+                        <Label htmlFor="behavior-type">Behavior Type</Label>
+                        <Textarea
+                            placeholder="Behavior type"
+                            value={behaviorType}
+                            onChange={(e) => setBehaviorType(e.target.value)}
+                        />
                     </div>
-                    
+                   
 
                     <Label htmlFor="notes">Notes</Label>
 

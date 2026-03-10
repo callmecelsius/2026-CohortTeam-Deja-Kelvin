@@ -15,12 +15,79 @@ import {
   ImageIcon,
 } from "lucide-react";
 import type { Animal } from "../../../../types/animalType";
+import BehaviorModal from "./BehaviorModal";
+import { useEffect, useState } from "react";
+import { getBehaviorLog, getAnimalConditions } from "@/api/mypets";
+import type { BehaviorLogGetDto } from "types/BehaviorLogType";
+import MedicalModal from "./MedicalModal";
+import type { AnimalConditionDto } from "types/AnimalConditionType";
+
+
 
 type PetDetailCardProps = {
   animal: Animal;
 };
 
 export function PetDetailCard({ animal }: PetDetailCardProps) {
+
+
+  const [behaviors, setBehaviors] = useState<BehaviorLogGetDto[]>([]);
+  const [medicalRecords, setMedicalRecords] = useState<AnimalConditionDto[]>([]);
+  const [showAllMedical, setShowAllMedical] = useState(false);
+  const [showAllBehavior, setShowAllBehavior] = useState(false);
+
+  const medicalToShow = showAllMedical ? medicalRecords : medicalRecords.slice(0, 1);
+  const behaviorsToShow = showAllBehavior ? behaviors : behaviors.slice(0, 1);
+  
+
+  useEffect(() => {
+    async function fetchBehaviors() {
+      try {
+        const data = await getBehaviorLog(animal.id);
+        console.log("Fetched behaviors:", data);
+        const mapped = data.map((b: any) => ({
+          Id: b.id,
+          AnimalId: b.animalId,
+          ReportedByUserId: b.reportedByUserId,
+          ReportedByName: b.reportedByName,
+          BehaviorType: b.behaviorType,
+          Notes: b.notes,
+          DateReported: new Date(b.dateReported), // convert string to Date
+          Resolved: b.resolved,
+        }));
+        setBehaviors(mapped);
+      } catch (error) {
+        console.error("Error fetching behaviors:", error);
+      }
+    }
+    fetchBehaviors();
+  }, [animal.id]);
+
+  useEffect(() => {
+    async function fetchMedical() {
+      try {
+        const data = await getAnimalConditions(animal.id);
+
+        const mapped = data.map((m: any) => ({
+          Id: m.id,
+          AnimalId: m.animalId,
+          ConditionType: m.conditionType,
+          Description: m.description,
+          Severity: m.severity,
+          StartDate: m.startDate ? new Date(m.startDate) : null,
+          EndDate: m.endDate ? new Date(m.endDate) : null,
+          VetSeen: m.vetSeen,
+        }));
+
+        setMedicalRecords(mapped);
+      } catch (error) {
+        console.error("Error fetching medical records:", error);
+      }
+    }
+
+    fetchMedical();
+  }, [animal.id]);
+
   return (
     <Card className="max-w-3xl w-full">
       <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden">
@@ -81,23 +148,116 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
         </div>
 
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            <Heart className="h-5 w-5 text-red-500" />
-            Medical
-          </h3>
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-            No medical records available yet.
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <Heart className="h-5 w-5 text-red-500" />
+              Medical
+            </h3>
+            <MedicalModal
+              animalId={animal.id}
+              onAdd={(medicalData) => {
+                setMedicalRecords((prev) => [
+                  ...prev,
+                  {
+                    ...medicalData,
+                    Id: Date.now(),
+                  },
+                ]);
+              }}
+            />
+          </div>
+
+          {medicalRecords.length > 0 ? (
+            <ul className="space-y-2">
+              {medicalToShow.map((m) => (
+                <li
+                  key={m.Id}
+                  className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">{m.ConditionType}</span>
+                    {m.StartDate && (
+                      <span className="text-xs text-gray-500">
+                        {m.StartDate.toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    {m.Description}
+                  </p>
+
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Severity: {m.Severity || "N/A"}
+                    {m.VetSeen ? " • Vet Seen ✅" : ""}
+                  </p>
+                </li>
+              ))}
+              {medicalRecords.length > 1 && (
+                <button
+                  onClick={() => setShowAllMedical(!showAllMedical)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllMedical ? "Show Less" : "Show More"}
+                </button>
+              )}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+              No medical records available yet.
+            </p>
+          )}
         </div>
 
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            <Brain className="h-5 w-5 text-purple-500" />
-            Behavior
-          </h3>
-          <p className="text-sm text-gray-400 dark:text-gray-500 italic">
-            No behavior notes available yet.
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <Brain className="h-5 w-5 text-purple-500" />
+              Behavior
+            </h3>
+            <BehaviorModal
+              animalId={animal.id}
+              onAdd={(behaviorData) => {
+                console.log("New behavior for", animal.name);
+                console.log("Behavior Data:", behaviorData);
+              }}
+            />
+          </div>
+          {behaviors.length > 0 ? (
+            <ul className="space-y-2">
+              {behaviorsToShow.map((b) => {
+               
+                return (
+                  <li key={b.Id} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold">{b.BehaviorType}</span>
+                      <span className="text-xs text-gray-500">
+                        {b.DateReported.toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">{b.Notes}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Reported by: {b.ReportedByName}
+                      {b.Resolved ? " ✅" : ""}
+                    </p>
+                  </li>
+                );
+              })}
+              {behaviors.length > 1 && (
+                <button
+                  onClick={() => setShowAllBehavior(!showAllBehavior)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllBehavior ? "Show Less" : "Show More"}
+                </button>
+              )}
+            </ul>
+
+          ) : (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+              No behavior notes available yet.
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

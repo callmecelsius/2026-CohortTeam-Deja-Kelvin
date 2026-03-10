@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InventoryModal } from "./InventoryModal";
+import { toast, Toaster } from "sonner";
 
 // Helper function to flatten inventory data
 const flattenInventory = (
@@ -73,7 +74,7 @@ export function InventoryTable() {
   const handleDelete =async (id: number, productId: number) => {
     deleteInventory(id);
     deleteProduct(productId);
-    alert("Deleted successfully");
+    toast.success("Deleted successfully");
     await loadInventory();
   };
 
@@ -108,7 +109,7 @@ export function InventoryTable() {
           id: formData.productid,
         });
         
-        alert("Updated successfully");
+        toast.success("Updated successfully");
       } else {
           const newProduct = await createProduct({
           categoryId: formData.categoryid,
@@ -121,7 +122,7 @@ export function InventoryTable() {
         reorderLevel: formData.reorderlevel,
             });
         
-        alert("Inserted successfully");
+        toast.success("Inserted successfully");
       }
       
 
@@ -228,6 +229,7 @@ export function InventoryTable() {
 
   return (
     <div className="w-full p-6 space-y-4">
+      <Toaster richColors position="top-center" />
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Inventory

@@ -12,38 +12,28 @@ import {
   Activity,
   Heart,
   Brain,
-  ImageIcon,
-  Plus,
+  ImageIcon
 } from "lucide-react";
 import type { Animal } from "../../../types/animalType";
 import BehaviorModal from "./BehaviorModal";
 import { useEffect, useState } from "react";
-import type { FosterUser } from "types/FosterParentType";
-import { getFosterUsers, getBehaviorLog, getAnimalConditions } from "@/api/mypets";
-import type { BehaviorLogDto } from "types/BehaviorLogType";
+import { getBehaviorLog, getAnimalConditions } from "@/api/mypets";
+import type { BehaviorLogGetDto } from "types/BehaviorLogType";
 import MedicalModal from "./MedicalModal";
 import type { AnimalConditionDto } from "types/AnimalConditionType";
-
 
 type PetDetailCardProps = {
   animal: Animal;
 };
 
 export function PetDetailCard({ animal }: PetDetailCardProps) {
-  const [fosterUsers, setFosterUsers] = useState<FosterUser[]>([]);
-  const [behaviors, setBehaviors] = useState<BehaviorLogDto[]>([]);
+  const [behaviors, setBehaviors] = useState<BehaviorLogGetDto[]>([]);
   const [medicalRecords, setMedicalRecords] = useState<AnimalConditionDto[]>([]);
+  const [showAllMedical, setShowAllMedical] = useState(false);
+  const [showAllBehavior, setShowAllBehavior] = useState(false);
 
-
-  useEffect(() => {
-    async function fetchFosterUsers() {
-      const data = await getFosterUsers(2);
-      console.log(data)
-      setFosterUsers(data);
-    }
-
-    fetchFosterUsers();
-  }, []);
+  const medicalToShow = showAllMedical ? medicalRecords : medicalRecords.slice(0, 1);
+  const behaviorsToShow = showAllBehavior ? behaviors : behaviors.slice(0, 1);
 
   useEffect(() => {
     async function fetchBehaviors() {
@@ -53,9 +43,10 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
           Id: b.id,
           AnimalId: b.animalId,
           ReportedByUserId: b.reportedByUserId,
+          ReportedByName: b.reportedByName,
           BehaviorType: b.behaviorType,
           Notes: b.notes,
-          DateReported: new Date(b.dateReported), // convert string to Date
+          DateReported: new Date(b.dateReported),
           Resolved: b.resolved,
         }));
         setBehaviors(mapped);
@@ -173,7 +164,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
 
           {medicalRecords.length > 0 ? (
             <ul className="space-y-2">
-              {medicalRecords.map((m) => (
+              {medicalToShow.map((m) => (
                 <li
                   key={m.Id}
                   className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800"
@@ -197,6 +188,14 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                   </p>
                 </li>
               ))}
+              {medicalRecords.length > 1 && (
+                <button
+                  onClick={() => setShowAllMedical(!showAllMedical)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllMedical ? "Show Less" : "Show More"}
+                </button>
+              )}
             </ul>
           ) : (
             <p className="text-sm text-gray-400 dark:text-gray-500 italic">
@@ -214,7 +213,6 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
 
             <BehaviorModal
               animalId={animal.id}
-              fosterUsers={fosterUsers}
               onAdd={(behaviorData) => {
                 console.log("New behavior for", animal.name);
                 console.log("Behavior Data:", behaviorData);
@@ -223,8 +221,8 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
           </div>
           {behaviors.length > 0 ? (
             <ul className="space-y-2">
-              {behaviors.map((b) => {
-                const reporter = fosterUsers.find(u => u.id === b.ReportedByUserId);
+              {behaviorsToShow.map((b) => {
+                console.log("Rendering behavior for", b);
                 return (
                   <li key={b.Id} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex justify-between items-center">
@@ -235,12 +233,21 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                     </div>
                     <p className="text-sm text-gray-400 dark:text-gray-500">{b.Notes}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Reported by: {reporter ? `${reporter.firstName} ${reporter.lastName}` : "Unknown"}
+                      
+                      Reported by: {b.ReportedByName}
                       {b.Resolved ? " ✅" : ""}
                     </p>
                   </li>
                 );
               })}
+              {behaviors.length > 1 && (
+                <button
+                  onClick={() => setShowAllBehavior(!showAllBehavior)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllBehavior ? "Show Less" : "Show More"}
+                </button>
+              )}
             </ul>
           ) : (
             <p className="text-sm text-gray-400 dark:text-gray-500 italic">
