@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MoreVertical, Pencil, Trash2, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InventoryModal } from "./InventoryModal";
 import { toast, Toaster } from "sonner";
@@ -169,21 +170,6 @@ export function InventoryTable() {
         </DropdownMenu>
       ),
     },
-    //  {
-    //   header: "Inventory ID",
-    //   cell: (item: InventoryFlattened) =>
-    //     item.id || <span className="text-gray-400 italic">N/A</span>,
-    // },
-    // {
-    //   header: "Product ID",
-    //   cell: (item: InventoryFlattened) =>
-    //     item.productid || <span className="text-gray-400 italic">N/A</span>,
-    // },
-    // {
-    //   header: "Category ID",
-    //   cell: (item: InventoryFlattened) =>
-    //     item.categoryid || <span className="text-gray-400 italic">N/A</span>,
-    // },
     {
       header: " Category Name",
       cell: (item: InventoryFlattened) => (
@@ -199,12 +185,26 @@ export function InventoryTable() {
     },
     {
       header: "Quantity on Hand",
-      cell: (item: InventoryFlattened) =>
-        item.quantityonhand ? (
-          item.quantityonhand
-        ) : (
-          <span className="text-gray-400 italic">N/A</span>
-        ),
+      cell: (item: InventoryFlattened) => {
+        const needsReorder = item.quantityonhand <= item.reorderlevel;
+        return (
+          <span className="flex items-center gap-1.5">
+            {item.quantityonhand ?? <span className="text-gray-400 italic">N/A</span>}
+            {needsReorder && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertTriangle className={`h-4 w-4 ${item.quantityonhand === 0 ? "text-red-500" : "text-amber-500"}`} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Low stock</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </span>
+        );
+      },
     },
     {
       header: "Reorder Level",

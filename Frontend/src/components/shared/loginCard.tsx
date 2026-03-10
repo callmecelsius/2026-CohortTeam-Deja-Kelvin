@@ -158,14 +158,14 @@ export function LoginCard({
               </div>
               <Button
                 type="submit"
-                className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900"
+                className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900 hover:cursor-pointer"
                 disabled={loading}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </Button>
               <button
                 type="button"
-                className="text-sm text-gray-500 hover:text-gray-800 underline"
+                className="text-sm text-gray-500 hover:text-gray-800 underline hover:cursor-pointer"
                 onClick={() => {
                   setIsForgotPassword(false)
                   setError(null)
@@ -249,7 +249,7 @@ export function LoginCard({
           <CardFooter className="px-0 pb-0 pt-6">
             <Button
               type="submit"
-              className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900"
+              className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900 hover:cursor-pointer"
               disabled={loading}
             >
               {loading ? "Signing in..." : "Login"}

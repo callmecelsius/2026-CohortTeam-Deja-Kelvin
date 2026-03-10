@@ -21,7 +21,7 @@ export function DataTable({
 }) {
   return (
     <div className="w-full space-y-6">
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden bg-white dark:bg-gray-800">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-x-auto bg-white dark:bg-gray-800">
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-900">

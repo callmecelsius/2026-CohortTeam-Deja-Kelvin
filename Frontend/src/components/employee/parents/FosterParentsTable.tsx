@@ -1,7 +1,8 @@
 import { getFosterParents, updateFosterParent } from '@/api/fosterparent';
 import { DataTable } from '@/components/shared/DataTable';
 import { ActionsDropdown } from '@/components/shared/ActionsDropdown';
-import { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useEffect, useMemo, useState } from 'react';
 import type { FosterUser } from 'types/FosterParentType';
 import { Pencil, Trash2 } from 'lucide-react';
 import { FosterParentsModal } from './FosterParentsModal';
@@ -31,6 +32,7 @@ export function FosterParentsTable() {
   const [fosterParents, setFosterParents] = useState<FosterData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFosterParent, setEditingFosterParent] = useState<FosterData | null>(null);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     async function load() {
@@ -133,12 +135,35 @@ export function FosterParentsTable() {
     }
   ];
 
+  const displayedParents = useMemo(() => {
+    const filtered = statusFilter === 'all'
+      ? fosterParents
+      : fosterParents.filter(p => p.status?.toLowerCase() === statusFilter);
+
+    return [...filtered].sort((a, b) => {
+      const dateA = a.userCreatedOn ? new Date(a.userCreatedOn).getTime() : 0;
+      const dateB = b.userCreatedOn ? new Date(b.userCreatedOn).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [fosterParents, statusFilter]);
+
   return (
     <div className="w-full p-6 space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Parents</h2>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <DataTable columns={columns} data={fosterParents} />
+      <DataTable columns={columns} data={displayedParents} />
       {editingFosterParent && (
         <FosterParentsModal
           key={editingFosterParent.userId}

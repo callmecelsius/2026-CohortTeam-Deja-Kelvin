@@ -1,12 +1,23 @@
-import { getAnimals, updateAnimal, deleteAnimal, createAnimal } from "@/api/animal";
+import { getAnimals, updateAnimal, deleteAnimal, createAnimal, assignPetToFosterHome, getAnimalSeverities } from "@/api/animal";
 import { DataTable } from "@/components/shared/DataTable";
 import { ActionsDropdown } from "@/components/shared/ActionsDropdown";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Eye, Pencil, Trash2, Home, AlertTriangle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Animal } from "../../../../types/animalType";
 import { PetsModal } from "./PetsModal";
+import { AssignFosterHomeModal } from "./AssignFosterHomeModal";
+import { toast } from "sonner";
+
+const severityColor: Record<string, string> = {
+  low: "text-green-500",
+  moderate: "text-yellow-500",
+  high: "text-amber-500",
+  critical: "text-red-500",
+};
 
 export function PetsTable() {
   const navigate = useNavigate();
@@ -14,12 +25,20 @@ export function PetsTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
   const [status, setStatus] = useState<string[]>([]);
+  const [assigningAnimal, setAssigningAnimal] = useState<Animal | null>(null);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [severityMap, setSeverityMap] = useState<Map<number, string>>(new Map());
+  const [severityFilter, setSeverityFilter] = useState("all");
 
   //loads pets from database through api
   useEffect(() => {
     async function load() {
-      const data = await getAnimals();
+      const [data, severities] = await Promise.all([
+        getAnimals(),
+        getAnimalSeverities(),
+      ]);
       setAnimals(Array.isArray(data) ? data : []);
+      setSeverityMap(new Map(severities.map(s => [s.animalId, s.severity])));
 
       const tempStatus: string[] = data.map(animal => animal.status).reduce((acc: string[], cur: string) => {
         if (acc.includes(cur)) {
@@ -94,6 +113,20 @@ export function PetsTable() {
     navigate(`/employee-pets-page/${animal.id}`);
   };
 
+  const handleAssign = (animal: Animal) => {
+    setAssigningAnimal(animal);
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignSubmit = async (fosterHomeId: number) => {
+    if (!assigningAnimal) return;
+    await assignPetToFosterHome(assigningAnimal.id, fosterHomeId);
+    toast.success(`${assigningAnimal.name || "Pet"} assigned to foster home`);
+    const data = await getAnimals();
+    setAnimals(Array.isArray(data) ? data : []);
+    setAssigningAnimal(null);
+  };
+
   const columns = [
     {
       header: "Actions",
@@ -105,10 +138,16 @@ export function PetsTable() {
               icon: <Eye className="mr-2 h-4 w-4" />,
               onClick: () => handleView(row),
             },
+
             {
               label: "Edit",
               icon: <Pencil className="mr-2 h-4 w-4" />,
               onClick: () => handleEdit(row),
+            },
+            {
+              label: "Assign",
+              icon: <Home className="mr-2 h-4 w-4" />,
+              onClick: () => handleAssign(row),
             },
             {
               label: "Delete",
@@ -122,8 +161,26 @@ export function PetsTable() {
     },
     {
       header: "Name",
-      cell: (row: Animal) =>
-        row.name || <span className="text-gray-400 italic">N/A</span>,
+      cell: (row: Animal) => {
+        const severity = severityMap.get(row.id);
+        return (
+          <span className="flex items-center gap-1.5">
+            {row.name || <span className="text-gray-400 italic">N/A</span>}
+            {severity && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertTriangle className={`h-4 w-4 ${severityColor[severity] ?? "text-gray-400"}`} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Medical Severity: {severity.charAt(0).toUpperCase() + severity.slice(1)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </span>
+        );
+      },
     },
     {
       header: "Breed",
@@ -157,21 +214,50 @@ export function PetsTable() {
     },
   ];
 
+  const displayedAnimals = useMemo(() => {
+    const filtered = severityFilter === "all"
+      ? animals
+      : severityFilter === "none"
+        ? animals.filter(a => !severityMap.has(a.id))
+        : animals.filter(a => severityMap.get(a.id) === severityFilter);
+
+    return [...filtered].sort((a, b) => {
+      const dateA = a.intakeDate ? new Date(a.intakeDate).getTime() : 0;
+      const dateB = b.intakeDate ? new Date(b.intakeDate).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [animals, severityFilter, severityMap]);
+
   return (
     <div className="w-full p-6 space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Pets</h2>
-        <Button
-          onClick={handleAddPet}
-          className="bg-[#D9BF86] text-gray-900 hover:bg-[#c9af76] font-semibold px-6 py-2 shadow-md hover:shadow-lg hover:cursor-pointer transition-all duration-200"
-        >
-          + Add Pet
-        </Button>
+        <div className="flex items-center gap-3">
+          <Select value={severityFilter} onValueChange={setSeverityFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by severity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Severities</SelectItem>
+              <SelectItem value="none">No Condition</SelectItem>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="moderate">Moderate</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="critical">Critical</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={handleAddPet}
+            className="bg-[#D9BF86] text-gray-900 hover:bg-[#c9af76] font-semibold px-6 py-2 shadow-md hover:shadow-lg hover:cursor-pointer transition-all duration-200"
+          >
+            + Add Pet
+          </Button>
+        </div>
       </div>
 
       <DataTable
         columns={columns}
-        data={animals}
+        data={displayedAnimals}
         getRowId={(row) => row.id}
       />
 
@@ -197,6 +283,17 @@ export function PetsTable() {
             : undefined
         }
         status={status}
+      />
+
+      <AssignFosterHomeModal
+        key={assigningAnimal?.id ?? "assign"}
+        open={isAssignModalOpen}
+        onOpenChange={(open) => {
+          setIsAssignModalOpen(open);
+          if (!open) setAssigningAnimal(null);
+        }}
+        animalName={assigningAnimal?.name ?? ""}
+        onSubmit={handleAssignSubmit}
       />
     </div>
   );
