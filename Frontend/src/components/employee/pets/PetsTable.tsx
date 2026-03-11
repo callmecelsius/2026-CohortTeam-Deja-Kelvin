@@ -60,8 +60,16 @@ export function PetsTable() {
   };
 
   //deletes pet from database
-  const handleDelete = (id: number) => {
-    deleteAnimal(id);
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteAnimal(id);
+      toast.success("Pet deleted successfully");
+      const data = await getAnimals();
+      setAnimals(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error deleting pet:", error);
+      toast.error("Failed to delete pet");
+    }
   };
 
   //opens modal when user clicks add pet button
@@ -121,6 +129,15 @@ export function PetsTable() {
   const handleAssignSubmit = async (fosterHomeId: number) => {
     if (!assigningAnimal) return;
     await assignPetToFosterHome(assigningAnimal.id, fosterHomeId);
+    await updateAnimal(assigningAnimal.id, {
+      name: assigningAnimal.name,
+      breed: assigningAnimal.breed,
+      weight: assigningAnimal.weight,
+      height: assigningAnimal.height,
+      intakeDate: assigningAnimal.intakeDate ?? new Date().toISOString(),
+      status: "Fostered",
+      animalPhoto: null,
+    });
     toast.success(`${assigningAnimal.name || "Pet"} assigned to foster home`);
     const data = await getAnimals();
     setAnimals(Array.isArray(data) ? data : []);
@@ -229,12 +246,12 @@ export function PetsTable() {
   }, [animals, severityFilter, severityMap]);
 
   return (
-    <div className="w-full p-6 space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-3 sm:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Pets</h2>
         <div className="flex items-center gap-3">
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by severity" />
             </SelectTrigger>
             <SelectContent>
@@ -292,6 +309,7 @@ export function PetsTable() {
           setIsAssignModalOpen(open);
           if (!open) setAssigningAnimal(null);
         }}
+        animalId={assigningAnimal?.id ?? 0}
         animalName={assigningAnimal?.name ?? ""}
         onSubmit={handleAssignSubmit}
       />

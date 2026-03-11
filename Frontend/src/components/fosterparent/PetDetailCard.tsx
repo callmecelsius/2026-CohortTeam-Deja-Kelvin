@@ -83,13 +83,13 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
   }, [animal.id]);
 
   return (
-    <Card className="max-w-3xl w-full">
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden">
+    <Card className="max-w-3xl w-full overflow-hidden pt-0">
+      <div className="flex items-center justify-center px-6 pt-2 overflow-hidden">
         {animal.animalPhoto ? (
           <img
             src={`data:image/png;base64,${animal.animalPhoto}`}
             alt={animal.name ?? "Pet"}
-            className="w-full h-full object-cover"
+            className="max-h-80 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm object-contain"
           />
         ) : (
           <div className="flex flex-col items-center text-gray-400 dark:text-gray-500">
@@ -109,7 +109,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DetailItem
             icon={<PawPrint className="h-5 w-5" />}
             label="Breed"
@@ -178,7 +178,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-400 dark:text-gray-500 break-words">
                     {m.Description}
                   </p>
 
@@ -231,7 +231,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                         {b.DateReported.toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-400 dark:text-gray-500">{b.Notes}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 break-words">{b.Notes}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       
                       Reported by: {b.ReportedByName}

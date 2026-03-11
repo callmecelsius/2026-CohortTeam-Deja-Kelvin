@@ -27,7 +27,7 @@ export default function HomePage() {
 
           {/* Right Hero Image (Circle) */}
           <div className="flex justify-center">
-            <div className="w-[450px] h-[450px] rounded-full overflow-hidden shadow-lg">
+            <div className="w-full max-w-[450px] h-auto aspect-square rounded-full overflow-hidden shadow-lg">
               <img
                 src={heroImg}
                 alt="Dog and cat"
@@ -48,7 +48,7 @@ export default function HomePage() {
             <img
               src={missionImg}
               alt="Mission animals"
-              className="w-[370px] h-[210px] object-cover border border-black/20"
+              className="w-full max-w-[370px] h-auto object-cover border border-black/20"
             />
 
             {/* Mission Text */}

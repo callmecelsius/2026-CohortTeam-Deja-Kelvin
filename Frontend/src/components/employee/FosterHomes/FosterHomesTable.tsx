@@ -105,8 +105,8 @@ export function FosterHomesTable() {
   };
 
   return (
-    <div className="w-full p-6 space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-3 sm:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Homes</h2>
         <Button
           onClick={handleAddHome}

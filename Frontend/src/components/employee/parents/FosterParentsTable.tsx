@@ -148,11 +148,11 @@ export function FosterParentsTable() {
   }, [fosterParents, statusFilter]);
 
   return (
-    <div className="w-full p-6 space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-3 sm:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Parents</h2>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
