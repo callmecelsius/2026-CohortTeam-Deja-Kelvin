@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Check submission deadline
         run: |
-          DEADLINE="2026-03-11T04:59:00Z"
-          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          DEADLINE="2026-03-11 23:59:00"
+          NOW=$(TZ="America/Chicago" date +"%Y-%m-%d %H:%M:%S")
 
           echo "Current time: $NOW"
           echo "Deadline: $DEADLINE"
