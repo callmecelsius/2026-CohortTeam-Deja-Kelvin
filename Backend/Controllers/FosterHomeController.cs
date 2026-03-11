@@ -16,22 +16,49 @@ namespace Backend.Controllers
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<FosterHome>> Get()
+    public ActionResult<IEnumerable<FosterHomeWithCountDto>> Get()
     {
-      var fosterHomeTemp = _unitOfWork.FosterHomeRepository.Get();
-      return Ok(fosterHomeTemp);
+      var fosterHomes = _unitOfWork.FosterHomeRepository.Get();
+      var now = DateTime.UtcNow;
+
+      var result = fosterHomes.Select(fh => new FosterHomeWithCountDto
+      {
+        Id = fh.Id,
+        HomeName = fh.HomeName,
+        Address = fh.Address,
+        Capacity = fh.Capacity ?? 0,
+        CurrentAnimalCount = _unitOfWork.FosterAssignmentRepository
+          .Get(fa => fa.FosterHomeId == fh.Id && (fa.EndDate == null || fa.EndDate > now))
+          .Count()
+      });
+
+      return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public ActionResult Get(int id)
+    public ActionResult<FosterHomeWithCountDto> Get(int id)
     {
-      var fosterHomeTemp = _unitOfWork.FosterHomeRepository.GetByID(id);
-      if (fosterHomeTemp == null)
+      var fosterHome = _unitOfWork.FosterHomeRepository.GetByID(id);
+      if (fosterHome == null)
       {
         return NotFound();
       }
 
-      return Ok(fosterHomeTemp);
+      var now = DateTime.UtcNow;
+      var currentAnimalCount = _unitOfWork.FosterAssignmentRepository
+        .Get(fa => fa.FosterHomeId == id && (fa.EndDate == null || fa.EndDate > now))
+        .Count();
+
+      var result = new FosterHomeWithCountDto
+      {
+        Id = fosterHome.Id,
+        HomeName = fosterHome.HomeName,
+        Address = fosterHome.Address,
+        Capacity = fosterHome.Capacity ?? 0,
+        CurrentAnimalCount = currentAnimalCount
+      };
+
+      return Ok(result);
     }
 
     [HttpGet("{id}/availability")]
