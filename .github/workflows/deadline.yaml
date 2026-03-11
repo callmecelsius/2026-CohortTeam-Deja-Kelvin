@@ -1,0 +1,25 @@
+name: PR Deadline Check
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  deadline-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check submission deadline
+        run: |
+          DEADLINE="2026-03-11T04:59:00Z"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          echo "Current time: $NOW"
+          echo "Deadline: $DEADLINE"
+
+          if [[ "$NOW" > "$DEADLINE" ]]; then
+            echo "❌ Deadline has passed. PR not allowed."
+            exit 1
+          else
+            echo "✅ Within allowed submission time."
+          fi
