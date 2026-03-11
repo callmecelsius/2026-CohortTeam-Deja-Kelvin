@@ -3,7 +3,7 @@ import { DataTable } from '@/components/shared/DataTable';
 import { ActionsDropdown } from '@/components/shared/ActionsDropdown';
 import { useEffect, useState } from 'react';
 import type { FosterUser } from 'types/FosterParentType';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { FosterParentsModal } from './FosterParentsModal';
 import { updateUser } from '@/api/user';
 
@@ -49,6 +49,21 @@ export function FosterParentsTable() {
   const handleDelete = async () => {
   };
 
+  const handleStatus = async (row: FosterData, status: string) => {
+    if (!row?.fosterParentId) return;
+
+    console.log('Updating status to:', status);
+    await updateFosterParent(row.fosterParentId, {
+      userId: row.userId,
+      fosterHomeId: row.fosterHomeId,
+      status: status,
+    });
+    const parents = await getFosterParents();
+    setFosterParents(mapFosterParentsToData(parents));
+
+
+  };
+
   const handleSubmit = async (formData: { firstName: string; lastName: string; phone: string; email: string; address: string; city: string; state: string; zip: string; status: string }) => {
     if (!editingFosterParent?.userId) return;
 
@@ -67,6 +82,7 @@ export function FosterParentsTable() {
       userId: editingFosterParent.userId,
       fosterHomeId: editingFosterParent.fosterHomeId,
       status: formData.status,
+      approvedDate: Date.now().toString(),
     });
 
     const parents = await getFosterParents();
@@ -92,6 +108,18 @@ export function FosterParentsTable() {
               onClick: () => handleDelete(),
               className: 'text-red-600',
             },
+            {
+              label: 'Approved',
+              icon: <CheckCircle className="mr-2 h-4 w-4" />,
+              onClick: () => handleStatus(row, 'Approved'),
+              className: 'text-green-800',
+            },
+            {
+              label: 'Rejected',
+              icon: <XCircle className="mr-2 h-4 w-4" />,
+              onClick: () => handleStatus(row, 'Rejected'),
+              className: ' text-red-800',
+            },
           ]}
         />
       ),
@@ -115,15 +143,15 @@ export function FosterParentsTable() {
         });
       },
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       cell: (row: FosterData) => {
         const status = row.status?.toLowerCase();
-        const bgColor = status === 'approved' ? 'bg-green-100 text-green-800' 
-                      : status === 'pending' ? 'bg-yellow-100 text-yellow-800'
-                      : status === 'rejected' ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-800';
-        
+        const bgColor = status === 'approved' ? 'bg-green-100 text-green-800'
+          : status === 'pending' ? 'bg-yellow-100 text-yellow-800'
+            : status === 'rejected' ? 'bg-red-100 text-red-800'
+              : 'bg-gray-100 text-gray-800';
+
         return (
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${bgColor}`}>
             {row.status}
@@ -167,7 +195,7 @@ export function FosterParentsTable() {
 }
 
 function mapFosterParentsToData(fosterParents: FosterUser[]): FosterData[] {
-  
+
   return fosterParents.map((user) => ({
     fosterParentId: user.fosterParent?.id ?? 0,
     userId: user.id,
