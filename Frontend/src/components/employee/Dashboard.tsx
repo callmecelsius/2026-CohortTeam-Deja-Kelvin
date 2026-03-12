@@ -81,15 +81,14 @@ export default function Dashboard() {
     },
   ]
   return (
-    <div className="bg-muted/40 rounded-2xl p-4 h-full">
-      <div className="max-w-6xl mx-auto h-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full md:grid-rows-2">
+    <div className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/40 rounded-2xl p-4 max-w-7xl mx-auto">
           {stats.map((item) => {
             const Icon = item.icon
             return (
 
               <Card key={item.title} className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-5 flex flex-col justify-between h-40">
+                <CardContent className="p-6 flex flex-col justify-between min-h-[12rem]">
                   <div className="flex items-center justify-between">
                     <div className="p-3 rounded-2xl bg-primary/10">
                       <Icon className="h-6 w-6" />
@@ -114,7 +113,6 @@ export default function Dashboard() {
 
             )
           })}
-        </div>
       </div>
     </div>
   )

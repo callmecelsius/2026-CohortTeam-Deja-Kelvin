@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { getFosterHomes } from '@/api/fosterhome';
 import { getAnimalFosterHome } from '@/api/animal';
-import type { FosterHome } from '../../../../types/fosterParentType';
+import type { FosterHome } from '../../../../types/FosterParentType';
 
 type AssignFosterHomeModalProps = {
   open: boolean;
