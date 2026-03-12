@@ -88,11 +88,6 @@ http://localhost:5173/
 - GitHub: https://github.com/bkeller2890
 - LinkedIn: https://www.linkedin.com/in/benjamin-keller-computer-scientist/
 
-### Claudia
-- Email: claudiamora0917@gmail.com
-- GitHub: https://github.com/CV17-09
-- LinkedIn: https://www.linkedin.com/in/claudia-v-dominguez-1b5802176
-
 ### Nate
 - Email: nathan.levi8@gmail.com
 - GitHub: https://github.com/NateLevi
