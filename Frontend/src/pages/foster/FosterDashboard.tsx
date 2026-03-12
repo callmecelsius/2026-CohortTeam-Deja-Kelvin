@@ -70,7 +70,7 @@ export default function FosterDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Foster Home Info */}
           <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 flex flex-col justify-between h-48">
+            <CardContent className="p-6 flex flex-col justify-between min-h-[12rem]">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-2xl bg-primary/10">
                   <Home className="h-6 w-6" />
@@ -92,7 +92,7 @@ export default function FosterDashboard() {
 
           {/* My Pets Summary */}
           <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
-            <CardContent className="p-6 flex flex-col justify-between h-48">
+            <CardContent className="p-6 flex flex-col justify-between min-h-[12rem]">
               <div className="flex items-center justify-between">
                 <div className="p-3 rounded-2xl bg-primary/10">
                   <PawPrint className="h-6 w-6" />

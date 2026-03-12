@@ -45,6 +45,32 @@ namespace Backend.Controllers
       return Ok( new { animalSeverity });
     }
 
+    [HttpGet("severity/animals")]
+    public ActionResult GetAnimalSeverities()
+    {
+      var severityOrder = new Dictionary<string, int>
+      {
+        { "low", 0 },
+        { "moderate", 1 },
+        { "high", 2 },
+        { "critical", 3 },
+      };
+
+      var result = _unitOfWork.AnimalConditionRepository
+          .Get(filter: a => a.Severity != null && a.AnimalId != null)
+          .GroupBy(a => a.AnimalId)
+          .Select(g => new
+          {
+            animalId = g.Key,
+            severity = g.OrderByDescending(a =>
+              severityOrder.GetValueOrDefault(a.Severity!.ToLower(), -1))
+              .First().Severity!.ToLower()
+          })
+          .ToList();
+
+      return Ok(result);
+    }
+
     [HttpPost]
     public ActionResult Post([FromBody] AnimalConditionDto value)
     {

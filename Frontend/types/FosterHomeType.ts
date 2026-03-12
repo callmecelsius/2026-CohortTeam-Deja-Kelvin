@@ -3,6 +3,7 @@ export interface FosterHome {
   homeName: string;
   Address: string;
   Capacity: number;
+  currentAnimalCount?: number;
   fosterParents?: string;
 }
 

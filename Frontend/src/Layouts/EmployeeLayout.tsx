@@ -23,12 +23,12 @@ export default function EmployeeLayout() {
   return (
     <SidebarProvider>
       <AppSidebar label="Employee" navItems={employeeNavItems} />
-      <SidebarInset className="flex flex-col min-h-screen">
+      <SidebarInset className="flex flex-col min-h-screen min-w-0 overflow-hidden">
         <header className="flex h-16 items-center justify-between px-4">
           <SidebarTrigger />
           <UserAvatar />
         </header>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <Outlet />
         </div>
       </SidebarInset>

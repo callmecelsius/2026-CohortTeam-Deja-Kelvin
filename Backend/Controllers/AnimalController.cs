@@ -122,7 +122,108 @@ namespace Backend.Controllers
             {
                 return NotFound();
             }
+
+            // Remove related records before deleting the animal
+            var assignments = _unitOfWork.FosterAssignmentRepository
+                .Get(fa => fa.AnimalId == id);
+            foreach (var assignment in assignments)
+            {
+                _unitOfWork.FosterAssignmentRepository.Delete(assignment.Id);
+            }
+
+            var conditions = _unitOfWork.AnimalConditionRepository
+                .Get(ac => ac.AnimalId == id);
+            foreach (var condition in conditions)
+            {
+                _unitOfWork.AnimalConditionRepository.Delete(condition.Id);
+            }
+
+            var behaviorLogs = _unitOfWork.BehaviorLogRepository
+                .Get(bl => bl.AnimalId == id);
+            foreach (var log in behaviorLogs)
+            {
+                _unitOfWork.BehaviorLogRepository.Delete(log.Id);
+            }
+
             _unitOfWork.AnimalRepository.Delete(id);
+            _unitOfWork.Save();
+            return Ok();
+        }
+
+        // GET api/Animal/5/foster-home
+        [HttpGet("{id}/foster-home")]
+        public ActionResult GetAnimalFosterHome(int id)
+        {
+            var animal = _unitOfWork.AnimalRepository.GetByID(id);
+            if (animal == null)
+            {
+                return NotFound("Animal not found.");
+            }
+
+            var now = DateTime.UtcNow;
+            var assignment = _unitOfWork.FosterAssignmentRepository
+                .Get(fa => fa.AnimalId == id && (fa.EndDate == null || fa.EndDate > now), includeProperties: "FosterHome")
+                .FirstOrDefault();
+
+            if (assignment?.FosterHome == null)
+            {
+                return Ok(new { assigned = false });
+            }
+
+            return Ok(new
+            {
+                assigned = true,
+                fosterHomeId = assignment.FosterHome.Id,
+                homeName = assignment.FosterHome.HomeName,
+                address = assignment.FosterHome.Address
+            });
+        }
+
+        // POST api/Animal/5/assign
+        [HttpPost("{id}/assign")]
+        public ActionResult AssignToFosterHome(int id, [FromBody] AssignFosterHomeDto dto)
+        {
+            var animal = _unitOfWork.AnimalRepository.GetByID(id);
+            if (animal == null)
+            {
+                return NotFound("Animal not found.");
+            }
+
+            var fosterHome = _unitOfWork.FosterHomeRepository.GetByID(dto.FosterHomeId);
+            if (fosterHome == null)
+            {
+                return NotFound("Foster home not found.");
+            }
+
+            // Check if foster home is at capacity
+            var now = DateTime.UtcNow;
+            var currentCount = _unitOfWork.FosterAssignmentRepository
+                .Get(fa => fa.FosterHomeId == dto.FosterHomeId && (fa.EndDate == null || fa.EndDate > now))
+                .Count();
+
+            if (fosterHome.Capacity.HasValue && currentCount >= fosterHome.Capacity.Value)
+            {
+                return BadRequest("This foster home is at full capacity.");
+            }
+
+            // End any existing active assignments for this animal
+            var existingAssignments = _unitOfWork.FosterAssignmentRepository
+                .Get(fa => fa.AnimalId == id && (fa.EndDate == null || fa.EndDate > now));
+            foreach (var old in existingAssignments)
+            {
+                old.EndDate = now;
+                _unitOfWork.FosterAssignmentRepository.Update(old);
+            }
+
+            var assignment = new FosterAssignment
+            {
+                AnimalId = id,
+                FosterHomeId = dto.FosterHomeId,
+                StartDate = now,
+                EndDate = null
+            };
+
+            _unitOfWork.FosterAssignmentRepository.Insert(assignment);
             _unitOfWork.Save();
             return Ok();
         }

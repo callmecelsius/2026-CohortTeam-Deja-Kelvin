@@ -12,38 +12,28 @@ import {
   Activity,
   Heart,
   Brain,
-  ImageIcon,
-  Plus,
+  ImageIcon
 } from "lucide-react";
 import type { Animal } from "../../../types/animalType";
 import BehaviorModal from "./BehaviorModal";
 import { useEffect, useState } from "react";
-import type { FosterUser } from "types/FosterParentType";
-import { getFosterUsers, getBehaviorLog, getAnimalConditions } from "@/api/mypets";
-import type { BehaviorLogDto } from "types/BehaviorLogType";
+import { getBehaviorLog, getAnimalConditions } from "@/api/mypets";
+import type { BehaviorLogGetDto } from "types/BehaviorLogType";
 import MedicalModal from "./MedicalModal";
 import type { AnimalConditionDto } from "types/AnimalConditionType";
-
 
 type PetDetailCardProps = {
   animal: Animal;
 };
 
 export function PetDetailCard({ animal }: PetDetailCardProps) {
-  const [fosterUsers, setFosterUsers] = useState<FosterUser[]>([]);
-  const [behaviors, setBehaviors] = useState<BehaviorLogDto[]>([]);
+  const [behaviors, setBehaviors] = useState<BehaviorLogGetDto[]>([]);
   const [medicalRecords, setMedicalRecords] = useState<AnimalConditionDto[]>([]);
+  const [showAllMedical, setShowAllMedical] = useState(false);
+  const [showAllBehavior, setShowAllBehavior] = useState(false);
 
-
-  useEffect(() => {
-    async function fetchFosterUsers() {
-      const data = await getFosterUsers(2);
-      console.log(data)
-      setFosterUsers(data);
-    }
-
-    fetchFosterUsers();
-  }, []);
+  const medicalToShow = showAllMedical ? medicalRecords : medicalRecords.slice(0, 1);
+  const behaviorsToShow = showAllBehavior ? behaviors : behaviors.slice(0, 1);
 
   useEffect(() => {
     async function fetchBehaviors() {
@@ -53,9 +43,10 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
           Id: b.id,
           AnimalId: b.animalId,
           ReportedByUserId: b.reportedByUserId,
+          ReportedByName: b.reportedByName,
           BehaviorType: b.behaviorType,
           Notes: b.notes,
-          DateReported: new Date(b.dateReported), // convert string to Date
+          DateReported: new Date(b.dateReported),
           Resolved: b.resolved,
         }));
         setBehaviors(mapped);
@@ -92,13 +83,13 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
   }, [animal.id]);
 
   return (
-    <Card className="max-w-3xl w-full">
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden">
+    <Card className="max-w-3xl w-full overflow-hidden pt-0">
+      <div className="flex items-center justify-center px-6 pt-2 overflow-hidden">
         {animal.animalPhoto ? (
           <img
             src={`data:image/png;base64,${animal.animalPhoto}`}
             alt={animal.name ?? "Pet"}
-            className="w-full h-full object-cover"
+            className="max-h-80 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm object-contain"
           />
         ) : (
           <div className="flex flex-col items-center text-gray-400 dark:text-gray-500">
@@ -118,7 +109,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DetailItem
             icon={<PawPrint className="h-5 w-5" />}
             label="Breed"
@@ -173,7 +164,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
 
           {medicalRecords.length > 0 ? (
             <ul className="space-y-2">
-              {medicalRecords.map((m) => (
+              {medicalToShow.map((m) => (
                 <li
                   key={m.Id}
                   className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800"
@@ -187,7 +178,7 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                     )}
                   </div>
 
-                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-400 dark:text-gray-500 break-words">
                     {m.Description}
                   </p>
 
@@ -197,6 +188,14 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                   </p>
                 </li>
               ))}
+              {medicalRecords.length > 1 && (
+                <button
+                  onClick={() => setShowAllMedical(!showAllMedical)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllMedical ? "Show Less" : "Show More"}
+                </button>
+              )}
             </ul>
           ) : (
             <p className="text-sm text-gray-400 dark:text-gray-500 italic">
@@ -214,7 +213,6 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
 
             <BehaviorModal
               animalId={animal.id}
-              fosterUsers={fosterUsers}
               onAdd={(behaviorData) => {
                 console.log("New behavior for", animal.name);
                 console.log("Behavior Data:", behaviorData);
@@ -223,8 +221,8 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
           </div>
           {behaviors.length > 0 ? (
             <ul className="space-y-2">
-              {behaviors.map((b) => {
-                const reporter = fosterUsers.find(u => u.id === b.ReportedByUserId);
+              {behaviorsToShow.map((b) => {
+                console.log("Rendering behavior for", b);
                 return (
                   <li key={b.Id} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex justify-between items-center">
@@ -233,14 +231,23 @@ export function PetDetailCard({ animal }: PetDetailCardProps) {
                         {b.DateReported.toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-400 dark:text-gray-500">{b.Notes}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 break-words">{b.Notes}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Reported by: {reporter ? `${reporter.firstName} ${reporter.lastName}` : "Unknown"}
+                      
+                      Reported by: {b.ReportedByName}
                       {b.Resolved ? " ✅" : ""}
                     </p>
                   </li>
                 );
               })}
+              {behaviors.length > 1 && (
+                <button
+                  onClick={() => setShowAllBehavior(!showAllBehavior)}
+                  className="text-sm text-blue-500 hover:underline mt-2"
+                >
+                  {showAllBehavior ? "Show Less" : "Show More"}
+                </button>
+              )}
             </ul>
           ) : (
             <p className="text-sm text-gray-400 dark:text-gray-500 italic">

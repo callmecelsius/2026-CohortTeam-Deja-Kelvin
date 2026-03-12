@@ -4,8 +4,8 @@ import useGlobalContext from '@/hooks/useGlobalContext';
 export default function EmployeeDashboard() {
   const { user } = useGlobalContext();
   return (
-    <div className="p-6 space-y-6">
-      <div>
+    <div className="h-full flex flex-col p-6">
+      <div className="mb-4">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Welcome back, {user?.firstName}
         </h1>
@@ -13,7 +13,9 @@ export default function EmployeeDashboard() {
           Here's what's happening today.
         </p>
       </div>
-      <Dashboard />
+      <div className="flex-1">
+        <Dashboard />
+      </div>
     </div>
   );
 }

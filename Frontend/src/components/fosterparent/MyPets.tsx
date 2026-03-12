@@ -15,6 +15,7 @@ import {
 const MyPets = () => {
     const { user } = useGlobalContext();
     const fosterHomeId = user?.fosterParent?.fosterHomeId;
+    console.log("Foster Home ID:", fosterHomeId);
     const [animals, setAnimals] = useState<Animal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -53,7 +54,7 @@ const MyPets = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {currentAnimals.map((animal) => (
                     <PetDetailCard key={animal.id} animal={animal} />
                 ))}

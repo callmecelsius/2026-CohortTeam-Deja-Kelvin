@@ -80,6 +80,21 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("status/{userId}")]
+        public ActionResult GetStatusByUserId(int userId)
+        {
+            var fosterParent = _unitOfWork.FosterParentRepository
+        .Get(x => x.UserId == userId)
+        .FirstOrDefault();
+
+            if (fosterParent == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { status = fosterParent.Status });
+        }
+
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {

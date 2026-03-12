@@ -1,9 +1,10 @@
 import { getFosterParents, updateFosterParent } from '@/api/fosterparent';
 import { DataTable } from '@/components/shared/DataTable';
 import { ActionsDropdown } from '@/components/shared/ActionsDropdown';
-import { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useEffect, useMemo, useState } from 'react';
 import type { FosterUser } from 'types/FosterParentType';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { FosterParentsModal } from './FosterParentsModal';
 import { updateUser } from '@/api/user';
 
@@ -31,6 +32,7 @@ export function FosterParentsTable() {
   const [fosterParents, setFosterParents] = useState<FosterData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFosterParent, setEditingFosterParent] = useState<FosterData | null>(null);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     async function load() {
@@ -46,7 +48,21 @@ export function FosterParentsTable() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async () => {
+ 
+
+  const handleStatus = async (row: FosterData, status: string) => {
+    if (!row?.fosterParentId) return;
+
+    console.log('Updating status to:', status);
+    await updateFosterParent(row.fosterParentId, {
+      userId: row.userId,
+      fosterHomeId: row.fosterHomeId,
+      status: status,
+    });
+    const parents = await getFosterParents();
+    setFosterParents(mapFosterParentsToData(parents));
+
+
   };
 
   const handleSubmit = async (formData: { firstName: string; lastName: string; phone: string; email: string; address: string; city: string; state: string; zip: string; status: string }) => {
@@ -67,6 +83,7 @@ export function FosterParentsTable() {
       userId: editingFosterParent.userId,
       fosterHomeId: editingFosterParent.fosterHomeId,
       status: formData.status,
+      approvedDate: Date.now().toString(),
     });
 
     const parents = await getFosterParents();
@@ -86,11 +103,18 @@ export function FosterParentsTable() {
               icon: <Pencil className="mr-2 h-4 w-4" />,
               onClick: () => handleEdit(row),
             },
+            
             {
-              label: 'Delete',
-              icon: <Trash2 className="mr-2 h-4 w-4" />,
-              onClick: () => handleDelete(),
-              className: 'text-red-600',
+              label: 'Approved',
+              icon: <CheckCircle className="mr-2 h-4 w-4" />,
+              onClick: () => handleStatus(row, 'Approved'),
+              className: 'text-green-800',
+            },
+            {
+              label: 'Rejected',
+              icon: <XCircle className="mr-2 h-4 w-4" />,
+              onClick: () => handleStatus(row, 'Rejected'),
+              className: ' text-red-800',
             },
           ]}
         />
@@ -115,15 +139,15 @@ export function FosterParentsTable() {
         });
       },
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       cell: (row: FosterData) => {
         const status = row.status?.toLowerCase();
-        const bgColor = status === 'approved' ? 'bg-green-100 text-green-800' 
-                      : status === 'pending' ? 'bg-yellow-100 text-yellow-800'
-                      : status === 'rejected' ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-800';
-        
+        const bgColor = status === 'approved' ? 'bg-green-100 text-green-800'
+          : status === 'pending' ? 'bg-yellow-100 text-yellow-800'
+            : status === 'rejected' ? 'bg-red-100 text-red-800'
+              : 'bg-gray-100 text-gray-800';
+
         return (
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${bgColor}`}>
             {row.status}
@@ -133,12 +157,35 @@ export function FosterParentsTable() {
     }
   ];
 
+  const displayedParents = useMemo(() => {
+    const filtered = statusFilter === 'all'
+      ? fosterParents
+      : fosterParents.filter(p => p.status?.toLowerCase() === statusFilter);
+
+    return [...filtered].sort((a, b) => {
+      const dateA = a.userCreatedOn ? new Date(a.userCreatedOn).getTime() : 0;
+      const dateB = b.userCreatedOn ? new Date(b.userCreatedOn).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [fosterParents, statusFilter]);
+
   return (
-    <div className="w-full p-6 space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-3 sm:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Parents</h2>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <DataTable columns={columns} data={fosterParents} />
+      <DataTable columns={columns} data={displayedParents} />
       {editingFosterParent && (
         <FosterParentsModal
           key={editingFosterParent.userId}
@@ -167,7 +214,7 @@ export function FosterParentsTable() {
 }
 
 function mapFosterParentsToData(fosterParents: FosterUser[]): FosterData[] {
-  
+
   return fosterParents.map((user) => ({
     fosterParentId: user.fosterParent?.id ?? 0,
     userId: user.id,

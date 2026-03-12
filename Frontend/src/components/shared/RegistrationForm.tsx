@@ -163,7 +163,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
           setUser(userData);
           form.reset();
           toast.success(`${data.firstname} ${data.lastname} successfully registered!`);
-          navigate('/foster-page');
+          navigate('/login');
           return;
         }
       }
@@ -213,7 +213,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* First Name & Last Name */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="firstname"
@@ -257,7 +257,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
               </div>
 
               {/* Phone & Email */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="phone"
@@ -325,7 +325,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
               />
 
               {/* City, State & Zip */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="city"
@@ -428,7 +428,7 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
               )}
 
               {/* Password & Confirm Password */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="password"

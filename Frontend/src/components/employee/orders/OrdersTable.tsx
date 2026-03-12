@@ -125,10 +125,10 @@ export function OrdersTable() {
   ];
 
   return (
-    <div className="w-full p-6 space-y-4">
+    <div className="w-full p-3 sm:p-6 space-y-4">
       <Toaster richColors position="top-center" />
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           Orders
         </h2>

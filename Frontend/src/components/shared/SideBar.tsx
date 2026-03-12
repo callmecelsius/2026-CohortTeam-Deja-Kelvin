@@ -35,7 +35,7 @@ export function AppSidebar({label, navItems}: AppSidebarProps) {
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="Cuddle Buddies Logo" className="h-10 w-auto object-contain" />
           <span className="text-base font-bold tracking-tight text-white">
-            Animal Shelter
+            Cuddle Buddies
           </span>
         </Link>
       </SidebarHeader>

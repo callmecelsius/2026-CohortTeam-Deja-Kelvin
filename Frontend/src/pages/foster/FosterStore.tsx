@@ -235,7 +235,7 @@ export default function FosterStore() {
   );
 
   return (
-    <div className="w-full p-6 space-y-6">
+    <div className="w-full p-3 sm:p-6 space-y-6">
       {/* Toast notifications */}
       <Toaster richColors position="top-center" />
 

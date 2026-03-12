@@ -30,3 +30,18 @@ export const deleteAnimal = async (id: number) => {
   const res = await api.delete(`/Animal/${id}`);
   return res.data;
 };
+
+export const getAnimalFosterHome = async (animalId: number) => {
+  const res = await api.get(`/Animal/${animalId}/foster-home`);
+  return res.data;
+};
+
+export const assignPetToFosterHome = async (animalId: number, fosterHomeId: number) => {
+  const res = await api.post(`/Animal/${animalId}/assign`, { fosterHomeId });
+  return res.data;
+};
+
+export const getAnimalSeverities = async (): Promise<{ animalId: number; severity: string }[]> => {
+  const res = await api.get<{ animalId: number; severity: string }[]>("/AnimalCondition/severity/animals");
+  return res.data;
+};

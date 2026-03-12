@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { supabaseClient } from "@/lib/supabaseclient"
 import { getUserByEmail } from "@/api/user"
+import { getFosterParentByUserId } from "@/api/fosterparent"
 import useGlobalContext from "@/hooks/useGlobalContext"
 import { useNavigate } from "react-router-dom"
 
@@ -55,6 +56,7 @@ export function LoginCard({
 
     // Fetch the full user record from our backend
     const userData = await getUserByEmail(email)
+    console.log("Logged in user data:", userData);
 
     // Store the user in global context so the rest of the app can access it
     setUser(userData)
@@ -63,7 +65,30 @@ export function LoginCard({
     if (userData?.roles?.includes("employee")) {
       navigate("/employee-page")
     } else {
-      navigate("/foster-page")
+      const fosterParent = await getFosterParentByUserId(userData.id)
+      console.log("Foster parent record:", fosterParent);
+      console.log("Foster parent status:", userData.id);
+
+      if (!fosterParent) {
+        setError("Foster parent record not found")
+        setLoading(false)
+        return
+      }
+
+      const status = fosterParent.status?.toLowerCase()
+      
+
+      if (status === "pending") {
+        setError("Your request is pending.")
+      }
+      else if (status === "approved") {
+        navigate("/foster-page")
+      }
+      else if (status === "rejected") {
+        setError(
+          "Your application is rejected. Please contact AnimalShelter."
+        )
+      }
     }
 
     setLoading(false)
@@ -133,14 +158,14 @@ export function LoginCard({
               </div>
               <Button
                 type="submit"
-                className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900"
+                className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900 hover:cursor-pointer"
                 disabled={loading}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </Button>
               <button
                 type="button"
-                className="text-sm text-gray-500 hover:text-gray-800 underline"
+                className="text-sm text-gray-500 hover:text-gray-800 underline hover:cursor-pointer"
                 onClick={() => {
                   setIsForgotPassword(false)
                   setError(null)
@@ -224,7 +249,7 @@ export function LoginCard({
           <CardFooter className="px-0 pb-0 pt-6">
             <Button
               type="submit"
-              className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900"
+              className="w-full bg-gray-800 text-white font-bold hover:bg-gray-900 hover:cursor-pointer"
               disabled={loading}
             >
               {loading ? "Signing in..." : "Login"}

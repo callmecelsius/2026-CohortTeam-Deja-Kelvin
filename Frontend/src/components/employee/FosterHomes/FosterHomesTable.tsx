@@ -12,7 +12,7 @@ import { FosterHomesModal } from './FosterHomesModal';
 import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 
 import { ActionsDropdown } from '@/components/shared/ActionsDropdown';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 export function FosterHomesTable() {
   const [fosterHome, setFosterHome] = useState<FosterHome[]>([]);
@@ -87,14 +87,14 @@ export function FosterHomesTable() {
           address: formData.address,
           capacity: formData.capacity,
         });
-        alert('Edited successfully');
+        toast.success('Edited successfully');
       } else {
         await createHome({
           homeName: formData.homeName,
           address: formData.address,
           capacity: formData.capacity,
         });
-        alert('Inserted successfully');
+        toast.success('Inserted successfully');
       }
       // Refresh table after submission
       await loadHomes();
@@ -105,8 +105,8 @@ export function FosterHomesTable() {
   };
 
   return (
-    <div className="w-full p-6 space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-3 sm:p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Foster Homes</h2>
         <Button
           onClick={handleAddHome}
@@ -137,6 +137,7 @@ export function FosterHomesTable() {
         }
         isEditing={editingHome ? true : false}
       />
+      <Toaster richColors position="top-center" />
     </div>
   );
 }
