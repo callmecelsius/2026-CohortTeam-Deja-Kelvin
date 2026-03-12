@@ -64,17 +64,16 @@ Open **Git Bash**, **PowerShell**, **Command Prompt**, or the terminal in **VS C
 
 Use the `cd` command to move into the project directory.
 
+### 3. Install Dependencies
 ```bash
 cd your-project-folder
-### 3. Install Dependencies
 npm install
-   .
 
-   4. Start the development server
-   npm run dev
+# Start the development server
+npm run dev
 
-   5. Open the app in your browser
-   http://localhost:5173/
+# Open the app in your browser
+http://localhost:5173/
 ```
 ## Team Members
 
