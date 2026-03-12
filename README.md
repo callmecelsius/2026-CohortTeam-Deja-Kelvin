@@ -75,46 +75,36 @@ npm install
 
    5. Open the app in your browser
    http://localhost:5173/
-
+```
 ## Team Members
 
-1. Dennis
-   Email: dennisgarcia.appdev@gmail.com
-   GitHub: https://github.com/dgarcia-appdev
-   LinkedIn: https://www.linkedin.com/in/dgarcia-appdev/Garcia/
 
-2. Kelvin
-   Email: kelnguyen9@gmail.com
-   GitHub: https://github.com/callmecelsius
-   LinkedIn: https://www.linkedin.com/in/kelvincelsius/
-
-3. Tiffany
+### Tiffany
    Email: scooter3229@gmail.com
    GitHub: https://github.com/TiffanyClark
    LinkedIn: https://www.linkedin.com/in/tiffanyclark09/
 
-4. Benjamin
+### Benjamin
    Email: b.keller2890@gmail.com
    GitHub: https://github.com/bkeller2890
    LinkedIn: https://www.linkedin.com/in/benjamin-keller-computer-scientist/
 
-5. Claudia
+### Claudia
    Email: claudiamora0917@gmail.com
    GitHub: https://github.com/CV17-09
    LinkedIn: https://www.linkedin.com/in/claudia-v-dominguez-1b5802176
 
-6. Nate
+### Nate
    Email: nathan.levi8@gmail.com
    GitHub: https://github.com/NateLevi
    LinkedIn: https://www.linkedin.com/in/natelevi/
 
-7. Nathan
+### Nathan
    Email: nathannguyen555@gmail.com
    GitHub: https://github.com/natenguyen100
    LinkedIn: https://www.linkedin.com/in/nathannguyen1000/
 
-8. Archi
+### Archi
    Email: archi.sahu95@gmail.com
    GitHub: https://github.com/Archi23Sahu
    LinkedIn: https://www.linkedin.com/in/archisahu/
-```
