@@ -162,8 +162,8 @@ const RegistrationForm = ({ variant, title, description }: RegistrationFormProps
         if (userData) {
           setUser(userData);
           form.reset();
-          toast.success(`${data.firstname} ${data.lastname} successfully registered!`);
-          navigate('/login');
+          toast.success('Application submitted! An employee will review your application soon.', { duration: 5000 });
+          setTimeout(() => navigate('/login'), 3000);
           return;
         }
       }

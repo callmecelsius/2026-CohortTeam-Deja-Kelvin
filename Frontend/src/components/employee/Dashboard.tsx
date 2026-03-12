@@ -81,7 +81,7 @@ export default function Dashboard() {
     },
   ]
   return (
-    <div className="bg-muted/40 rounded-2xl p-4 h-full">
+    <div className="bg-muted/40 rounded-2xl p-4">
       <div className="max-w-6xl mx-auto h-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full md:grid-rows-2">
           {stats.map((item) => {
