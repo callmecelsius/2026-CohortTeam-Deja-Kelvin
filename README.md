@@ -35,20 +35,19 @@ A web-based management interface that allows employees to view, create, edit, an
 
 - React
 - TypeScript
+- Vite
 - Tailwind CSS
-- React Router
 
-### Backend
-
-- FastAPI
-  -C#
-  -Superbase
+### Backend 
+- ASP.NET Core (C#)
+- Controllers and DTOS
+- Supabase
 
 ### Tools
 
 - Git / GitHub
 - Figma
-  -Jira
+- Jira
 
 ## 🛠️ Setup Instructions
 
