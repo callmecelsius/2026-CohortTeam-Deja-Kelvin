@@ -40,7 +40,6 @@ A web-based management interface that allows employees to view, create, edit, an
 
 ### Backend 
 - ASP.NET Core (C#)
-- Controllers and DTOS
 - Supabase
 
 ### Tools
